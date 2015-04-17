@@ -14,6 +14,7 @@
 	<target name="init">
 	    <tstamp/>
 		<mkdir dir="bin" />
+		<mkdir dir="lib" />
 		<copy includeemptydirs="false" todir="bin">
 			<fileset dir="src">
 				<exclude name="**/*.launch" />
