@@ -32,9 +32,9 @@ import java.util.Set;
  * @author Inderjeet Singh
  * @author Joel Leitch
  */
-public final class JtonObject extends JtonElement implements Map<String, JtonElement> {
-	private final LinkedTreeMap<String, JtonElement> members =
-			new LinkedTreeMap<String, JtonElement>();
+public final class JtonObject extends JtonElement implements
+		Map<String, JtonElement> {
+	private final LinkedTreeMap<String, JtonElement> members = new LinkedTreeMap<String, JtonElement>();
 
 	@Override
 	JtonObject deepCopy() {
@@ -47,13 +47,13 @@ public final class JtonObject extends JtonElement implements Map<String, JtonEle
 
 	/**
 	 * Adds a member, which is a name-value pair, to self. The name must be a
-	 * String, but the value can be an arbitrary JsonElement, thereby allowing you
-	 * to build a full tree of JsonElements rooted at this node.
+	 * String, but the value can be an arbitrary JsonElement, thereby allowing
+	 * you to build a full tree of JsonElements rooted at this node.
 	 *
 	 * @param property
-	 *          name of the member.
+	 *            name of the member.
 	 * @param value
-	 *          the member object.
+	 *            the member object.
 	 */
 	public void add(String property, JtonElement value) {
 		if (value == null) {
@@ -66,7 +66,7 @@ public final class JtonObject extends JtonElement implements Map<String, JtonEle
 	 * Removes the {@code property} from this {@link JtonObject}.
 	 *
 	 * @param property
-	 *          name of the member that should be removed.
+	 *            name of the member that should be removed.
 	 * @return the {@link JtonElement} object that is being removed.
 	 * @since 1.3
 	 */
@@ -79,11 +79,11 @@ public final class JtonObject extends JtonElement implements Map<String, JtonEle
 	 * converted to a JsonPrimitive of String.
 	 *
 	 * @param property
-	 *          name of the member.
+	 *            name of the member.
 	 * @param value
-	 *          the string value associated with the member.
+	 *            the string value associated with the member.
 	 */
-	public void addProperty(String property, String value) {
+	public void add(String property, String value) {
 		add(property, createJsonElement(value));
 	}
 
@@ -92,11 +92,11 @@ public final class JtonObject extends JtonElement implements Map<String, JtonEle
 	 * converted to a JsonPrimitive of Number.
 	 *
 	 * @param property
-	 *          name of the member.
+	 *            name of the member.
 	 * @param value
-	 *          the number value associated with the member.
+	 *            the number value associated with the member.
 	 */
-	public void addProperty(String property, Number value) {
+	public void add(String property, Number value) {
 		add(property, createJsonElement(value));
 	}
 
@@ -105,11 +105,11 @@ public final class JtonObject extends JtonElement implements Map<String, JtonEle
 	 * converted to a JsonPrimitive of Boolean.
 	 *
 	 * @param property
-	 *          name of the member.
+	 *            name of the member.
 	 * @param value
-	 *          the number value associated with the member.
+	 *            the number value associated with the member.
 	 */
-	public void addProperty(String property, Boolean value) {
+	public void add(String property, Boolean value) {
 		add(property, createJsonElement(value));
 	}
 
@@ -118,45 +118,77 @@ public final class JtonObject extends JtonElement implements Map<String, JtonEle
 	 * to a JsonPrimitive of Character.
 	 *
 	 * @param property
-	 *          name of the member.
+	 *            name of the member.
 	 * @param value
-	 *          the number value associated with the member.
+	 *            the number value associated with the member.
 	 */
-	public void addProperty(String property, Character value) {
+	public void add(String property, Character value) {
 		add(property, createJsonElement(value));
 	}
 
-	public void addProperty(String property, Date value) {
+	/**
+	 * Convenience method to add a {@link Date} member. The specified value is
+	 * converted to a JtonPrimitive of Date.
+	 * 
+	 * @param property
+	 *            name of the member.
+	 * @param value
+	 *            the date value associated with the member.
+	 */
+	public void add(String property, Date value) {
 		add(property, createJsonElement(value));
 	}
-	
-	public void addProperty(String property, Object value) {
+
+	/**
+	 * Convenience method to add a member. The specified value is converted to a
+	 * JtonPrimitive at runtime.
+	 * 
+	 * @param property
+	 *            name of the member.
+	 * @param value
+	 *            the value associated with the member.
+	 */
+	public void add(String property, Object value) {
 		add(property, createJsonElement(value));
 	}
-	
-	public void addProperty(String property, Object value, boolean jtonTransient) {
+
+	/**
+	 * Convenience method to add a member. The specified value is converted to a
+	 * JtonPrimitive id {@code jtonTransient} is {@code false} otherwise not.
+	 * 
+	 * @param property
+	 *            name of the member.
+	 * @param value
+	 *            the value associated with the member.
+	 * @param jtonTransient
+	 *            if {@code false} the is converted to a JtonPrimitive;
+	 *            otherwise the value will be added as it is.
+	 */
+	public void add(String property, Object value, boolean jtonTransient) {
 		add(property, createJsonElement(value, jtonTransient));
 	}
 
 	/**
-	 * Creates the proper {@link JtonElement} object from the given {@code value}
-	 * object.
+	 * Creates the proper {@link JtonElement} object from the given
+	 * {@code value} object.
 	 *
 	 * @param value
-	 *          the object to generate the {@link JtonElement} for
-	 * @return a {@link JtonPrimitive} if the {@code value} is not null, otherwise
-	 *         a {@link JtonNull}
+	 *            the object to generate the {@link JtonElement} for
+	 * @return a {@link JtonPrimitive} if the {@code value} is not null,
+	 *         otherwise a {@link JtonNull}
 	 */
 	private JtonElement createJsonElement(Object value) {
 		return createJsonElement(value, false);
 	}
+
 	private JtonElement createJsonElement(Object value, boolean jtonTransient) {
-		return value == null && !jtonTransient ? JtonNull.INSTANCE : new JtonPrimitive(value, jtonTransient);
+		return value == null && !jtonTransient ? JtonNull.INSTANCE
+				: new JtonPrimitive(value, jtonTransient);
 	}
 
 	/**
-	 * Returns a set of members of this object. The set is ordered, and the order
-	 * is in which the elements were added.
+	 * Returns a set of members of this object. The set is ordered, and the
+	 * order is in which the elements were added.
 	 *
 	 * @return a set of members of this object.
 	 */
@@ -166,12 +198,13 @@ public final class JtonObject extends JtonElement implements Map<String, JtonEle
 	}
 
 	/**
-	 * Convenience method to check if a member with the specified name is present
-	 * in this object.
+	 * Convenience method to check if a member with the specified name is
+	 * present in this object.
 	 *
 	 * @param memberName
-	 *          name of the member that is being checked for presence.
-	 * @return true if there is a member with the specified name, false otherwise.
+	 *            name of the member that is being checked for presence.
+	 * @return true if there is a member with the specified name, false
+	 *         otherwise.
 	 */
 	public boolean has(String memberName) {
 		return members.containsKey(memberName);
@@ -181,7 +214,7 @@ public final class JtonObject extends JtonElement implements Map<String, JtonEle
 	 * Returns the member with the specified name.
 	 *
 	 * @param memberName
-	 *          name of the member that is being requested.
+	 *            name of the member that is being requested.
 	 * @return the member matching the name. Null if no such member exists.
 	 */
 	public JtonElement get(String memberName) {
@@ -192,10 +225,11 @@ public final class JtonObject extends JtonElement implements Map<String, JtonEle
 	}
 
 	/**
-	 * Convenience method to get the specified member as a JsonPrimitive element.
+	 * Convenience method to get the specified member as a JsonPrimitive
+	 * element.
 	 *
 	 * @param memberName
-	 *          name of the member being requested.
+	 *            name of the member being requested.
 	 * @return the JsonPrimitive corresponding to the specified member.
 	 */
 	public JtonPrimitive getAsJtonPrimitive(String memberName) {
@@ -206,7 +240,7 @@ public final class JtonObject extends JtonElement implements Map<String, JtonEle
 	 * Convenience method to get the specified member as a JsonArray.
 	 *
 	 * @param memberName
-	 *          name of the member being requested.
+	 *            name of the member being requested.
 	 * @return the JsonArray corresponding to the specified member.
 	 */
 	public JtonArray getAsJtonArray(String memberName) {
@@ -217,7 +251,7 @@ public final class JtonObject extends JtonElement implements Map<String, JtonEle
 	 * Convenience method to get the specified member as a JsonObject.
 	 *
 	 * @param memberName
-	 *          name of the member being requested.
+	 *            name of the member being requested.
 	 * @return the JsonObject corresponding to the specified member.
 	 */
 	public JtonObject getAsJtonObject(String memberName) {
@@ -226,8 +260,9 @@ public final class JtonObject extends JtonElement implements Map<String, JtonEle
 
 	@Override
 	public boolean equals(Object o) {
-		return (o == this) || (o instanceof JtonObject
-				&& ((JtonObject) o).members.equals(members));
+		return (o == this)
+				|| (o instanceof JtonObject && ((JtonObject) o).members
+						.equals(members));
 	}
 
 	@Override
@@ -273,12 +308,13 @@ public final class JtonObject extends JtonElement implements Map<String, JtonEle
 	@Override
 	@Deprecated
 	public JtonElement remove(Object key) {
-		return remove((String)key);
+		return remove((String) key);
 	}
 
 	@Override
 	public void putAll(Map<? extends String, ? extends JtonElement> m) {
-		for (Map.Entry<? extends String, ? extends JtonElement> entry: m.entrySet()) {
+		for (Map.Entry<? extends String, ? extends JtonElement> entry : m
+				.entrySet()) {
 			add(entry.getKey(), entry.getValue());
 		}
 	}
