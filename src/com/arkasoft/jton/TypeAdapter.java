@@ -230,7 +230,7 @@ public abstract class TypeAdapter<T> {
       write(jsonWriter, value);
       return jsonWriter.get();
     } catch (IOException e) {
-      throw new JsonIOException(e);
+      throw new JtonIOException(e);
     }
   }
 
@@ -280,7 +280,7 @@ public abstract class TypeAdapter<T> {
       JsonReader jsonReader = new JsonTreeReader(jsonTree);
       return read(jsonReader);
     } catch (IOException e) {
-      throw new JsonIOException(e);
+      throw new JtonIOException(e);
     }
   }
 }

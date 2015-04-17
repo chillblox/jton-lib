@@ -17,7 +17,7 @@
 package com.arkasoft.jton.internal.bind;
 
 import com.arkasoft.jton.Gson;
-import com.arkasoft.jton.JsonSyntaxException;
+import com.arkasoft.jton.JtonSyntaxException;
 import com.arkasoft.jton.TypeAdapter;
 import com.arkasoft.jton.TypeAdapterFactory;
 import com.arkasoft.jton.reflect.TypeToken;
@@ -78,7 +78,7 @@ public final class DateTypeAdapter extends TypeAdapter<Date> {
     try {
       return iso8601Format.parse(json);
     } catch (ParseException e) {
-      throw new JsonSyntaxException(json, e);
+      throw new JtonSyntaxException(json, e);
     }
   }
 

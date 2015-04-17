@@ -22,15 +22,15 @@ package com.arkasoft.jton;
  * @author Inderjeet Singh
  * @author Joel Leitch
  */
-public final class JsonSyntaxException extends JsonParseException {
+public final class JtonSyntaxException extends JtonParseException {
 
   private static final long serialVersionUID = 1L;
 
-  public JsonSyntaxException(String msg) {
+  public JtonSyntaxException(String msg) {
     super(msg);
   }
 
-  public JsonSyntaxException(String msg, Throwable cause) {
+  public JtonSyntaxException(String msg, Throwable cause) {
     super(msg, cause);
   }
 
@@ -41,7 +41,7 @@ public final class JsonSyntaxException extends JsonParseException {
    *
    * @param cause root exception that caused this exception to be thrown.
    */
-  public JsonSyntaxException(Throwable cause) {
+  public JtonSyntaxException(Throwable cause) {
     super(cause);
   }
 }

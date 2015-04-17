@@ -17,10 +17,10 @@
 package com.arkasoft.jton.internal;
 
 import com.arkasoft.jton.JtonElement;
-import com.arkasoft.jton.JsonIOException;
+import com.arkasoft.jton.JtonIOException;
 import com.arkasoft.jton.JtonNull;
-import com.arkasoft.jton.JsonParseException;
-import com.arkasoft.jton.JsonSyntaxException;
+import com.arkasoft.jton.JtonParseException;
+import com.arkasoft.jton.JtonSyntaxException;
 import com.arkasoft.jton.internal.bind.TypeAdapters;
 import com.arkasoft.jton.stream.JsonReader;
 import com.arkasoft.jton.stream.JsonWriter;
@@ -36,7 +36,7 @@ public final class Streams {
   /**
    * Takes a reader in any state and returns the next value as a JsonElement.
    */
-  public static JtonElement parse(JsonReader reader) throws JsonParseException {
+  public static JtonElement parse(JsonReader reader) throws JtonParseException {
     boolean isEmpty = true;
     try {
       reader.peek();
@@ -51,13 +51,13 @@ public final class Streams {
         return JtonNull.INSTANCE;
       }
       // The stream ended prematurely so it is likely a syntax error.
-      throw new JsonSyntaxException(e);
+      throw new JtonSyntaxException(e);
     } catch (MalformedJsonException e) {
-      throw new JsonSyntaxException(e);
+      throw new JtonSyntaxException(e);
     } catch (IOException e) {
-      throw new JsonIOException(e);
+      throw new JtonIOException(e);
     } catch (NumberFormatException e) {
-      throw new JsonSyntaxException(e);
+      throw new JtonSyntaxException(e);
     }
   }
 

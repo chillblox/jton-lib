@@ -17,7 +17,7 @@
 package com.arkasoft.jton.internal.bind;
 
 import com.arkasoft.jton.Gson;
-import com.arkasoft.jton.JsonSyntaxException;
+import com.arkasoft.jton.JtonSyntaxException;
 import com.arkasoft.jton.TypeAdapter;
 import com.arkasoft.jton.TypeAdapterFactory;
 import com.arkasoft.jton.reflect.TypeToken;
@@ -56,7 +56,7 @@ public final class TimeTypeAdapter extends TypeAdapter<Time> {
       Date date = format.parse(in.nextString());
       return new Time(date.getTime());
     } catch (ParseException e) {
-      throw new JsonSyntaxException(e);
+      throw new JtonSyntaxException(e);
     }
   }
 

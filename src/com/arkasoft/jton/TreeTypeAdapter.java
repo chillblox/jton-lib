@@ -29,8 +29,8 @@ import java.io.IOException;
  * has a facility to lookup a delegate type adapter on demand.
  */
 final class TreeTypeAdapter<T> extends TypeAdapter<T> {
-  private final JsonSerializer<T> serializer;
-  private final JsonDeserializer<T> deserializer;
+  private final JtonSerializer<T> serializer;
+  private final JtonDeserializer<T> deserializer;
   private final Gson gson;
   private final TypeToken<T> typeToken;
   private final TypeAdapterFactory skipPast;
@@ -38,7 +38,7 @@ final class TreeTypeAdapter<T> extends TypeAdapter<T> {
   /** The delegate is lazily created because it may not be needed, and creating it may fail. */
   private TypeAdapter<T> delegate;
 
-  private TreeTypeAdapter(JsonSerializer<T> serializer, JsonDeserializer<T> deserializer,
+  private TreeTypeAdapter(JtonSerializer<T> serializer, JtonDeserializer<T> deserializer,
       Gson gson, TypeToken<T> typeToken, TypeAdapterFactory skipPast) {
     this.serializer = serializer;
     this.deserializer = deserializer;
@@ -109,16 +109,16 @@ final class TreeTypeAdapter<T> extends TypeAdapter<T> {
     private final TypeToken<?> exactType;
     private final boolean matchRawType;
     private final Class<?> hierarchyType;
-    private final JsonSerializer<?> serializer;
-    private final JsonDeserializer<?> deserializer;
+    private final JtonSerializer<?> serializer;
+    private final JtonDeserializer<?> deserializer;
 
     private SingleTypeFactory(Object typeAdapter, TypeToken<?> exactType, boolean matchRawType,
         Class<?> hierarchyType) {
-      serializer = typeAdapter instanceof JsonSerializer
-          ? (JsonSerializer<?>) typeAdapter
+      serializer = typeAdapter instanceof JtonSerializer
+          ? (JtonSerializer<?>) typeAdapter
           : null;
-      deserializer = typeAdapter instanceof JsonDeserializer
-          ? (JsonDeserializer<?>) typeAdapter
+      deserializer = typeAdapter instanceof JtonDeserializer
+          ? (JtonDeserializer<?>) typeAdapter
           : null;
       $Gson$Preconditions.checkArgument(serializer != null || deserializer != null);
       this.exactType = exactType;
@@ -132,8 +132,8 @@ final class TreeTypeAdapter<T> extends TypeAdapter<T> {
           ? exactType.equals(type) || matchRawType && exactType.getType() == type.getRawType()
           : hierarchyType.isAssignableFrom(type.getRawType());
       return matches
-          ? new TreeTypeAdapter<T>((JsonSerializer<T>) serializer,
-              (JsonDeserializer<T>) deserializer, gson, type, this)
+          ? new TreeTypeAdapter<T>((JtonSerializer<T>) serializer,
+              (JtonDeserializer<T>) deserializer, gson, type, this)
           : null;
     }
   }

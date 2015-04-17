@@ -61,7 +61,7 @@ import com.arkasoft.jton.stream.MalformedJsonException;
  * <p>You can create a Gson instance by invoking {@code new Gson()} if the default configuration
  * is all you need. You can also use {@link GsonBuilder} to build a Gson instance with various
  * configuration options such as versioning support, pretty printing, custom
- * {@link JsonSerializer}s, {@link JsonDeserializer}s, and {@link InstanceCreator}s.</p>
+ * {@link JtonSerializer}s, {@link JtonDeserializer}s, and {@link InstanceCreator}s.</p>
  *
  * <p>Here is an example of how Gson is used for a simple Class:
  *
@@ -122,14 +122,14 @@ public final class Gson {
   private final boolean generateNonExecutableJson;
   private final boolean prettyPrinting;
 
-  final JsonDeserializationContext deserializationContext = new JsonDeserializationContext() {
+  final JtonDeserializationContext deserializationContext = new JtonDeserializationContext() {
     @SuppressWarnings("unchecked")
-	public <T> T deserialize(JtonElement json, Type typeOfT) throws JsonParseException {
+	public <T> T deserialize(JtonElement json, Type typeOfT) throws JtonParseException {
       return (T) fromJson(json, typeOfT);
     }
   };
 
-  final JsonSerializationContext serializationContext = new JsonSerializationContext() {
+  final JtonSerializationContext serializationContext = new JtonSerializationContext() {
     public JtonElement serialize(Object src) {
       return toJsonTree(src);
     }
@@ -546,10 +546,10 @@ public final class Gson {
    *
    * @param src the object for which Json representation is to be created setting for Gson
    * @param writer Writer to which the Json representation needs to be written
-   * @throws JsonIOException if there was a problem writing to the writer
+   * @throws JtonIOException if there was a problem writing to the writer
    * @since 1.2
    */
-  public void toJson(Object src, Appendable writer) throws JsonIOException {
+  public void toJson(Object src, Appendable writer) throws JtonIOException {
     if (src != null) {
       toJson(src, src.getClass(), writer);
     } else {
@@ -570,25 +570,25 @@ public final class Gson {
    * Type typeOfSrc = new TypeToken&lt;Collection&lt;Foo&gt;&gt;(){}.getType();
    * </pre>
    * @param writer Writer to which the Json representation of src needs to be written.
-   * @throws JsonIOException if there was a problem writing to the writer
+   * @throws JtonIOException if there was a problem writing to the writer
    * @since 1.2
    */
-  public void toJson(Object src, Type typeOfSrc, Appendable writer) throws JsonIOException {
+  public void toJson(Object src, Type typeOfSrc, Appendable writer) throws JtonIOException {
     try {
       JsonWriter jsonWriter = newJsonWriter(Streams.writerForAppendable(writer));
       toJson(src, typeOfSrc, jsonWriter);
     } catch (IOException e) {
-      throw new JsonIOException(e);
+      throw new JtonIOException(e);
     }
   }
 
   /**
    * Writes the JSON representation of {@code src} of type {@code typeOfSrc} to
    * {@code writer}.
-   * @throws JsonIOException if there was a problem writing to the writer
+   * @throws JtonIOException if there was a problem writing to the writer
    */
   @SuppressWarnings("unchecked")
-  public void toJson(Object src, Type typeOfSrc, JsonWriter writer) throws JsonIOException {
+  public void toJson(Object src, Type typeOfSrc, JsonWriter writer) throws JtonIOException {
     TypeAdapter<?> adapter = getAdapter(TypeToken.get(typeOfSrc));
     boolean oldLenient = writer.isLenient();
     writer.setLenient(true);
@@ -599,7 +599,7 @@ public final class Gson {
     try {
       ((TypeAdapter<Object>) adapter).write(writer, src);
     } catch (IOException e) {
-      throw new JsonIOException(e);
+      throw new JtonIOException(e);
     } finally {
       writer.setLenient(oldLenient);
       writer.setHtmlSafe(oldHtmlSafe);
@@ -625,10 +625,10 @@ public final class Gson {
    *
    * @param jsonElement root of a tree of {@link JtonElement}s
    * @param writer Writer to which the Json representation needs to be written
-   * @throws JsonIOException if there was a problem writing to the writer
+   * @throws JtonIOException if there was a problem writing to the writer
    * @since 1.4
    */
-  public void toJson(JtonElement jsonElement, Appendable writer) throws JsonIOException {
+  public void toJson(JtonElement jsonElement, Appendable writer) throws JtonIOException {
     try {
       JsonWriter jsonWriter = newJsonWriter(Streams.writerForAppendable(writer));
       toJson(jsonElement, jsonWriter);
@@ -655,9 +655,9 @@ public final class Gson {
 
   /**
    * Writes the JSON for {@code jsonElement} to {@code writer}.
-   * @throws JsonIOException if there was a problem writing to the writer
+   * @throws JtonIOException if there was a problem writing to the writer
    */
-  public void toJson(JtonElement jsonElement, JsonWriter writer) throws JsonIOException {
+  public void toJson(JtonElement jsonElement, JsonWriter writer) throws JtonIOException {
     boolean oldLenient = writer.isLenient();
     writer.setLenient(true);
     boolean oldHtmlSafe = writer.isHtmlSafe();
@@ -667,7 +667,7 @@ public final class Gson {
     try {
       Streams.write(jsonElement, writer);
     } catch (IOException e) {
-      throw new JsonIOException(e);
+      throw new JtonIOException(e);
     } finally {
       writer.setLenient(oldLenient);
       writer.setHtmlSafe(oldHtmlSafe);
@@ -689,10 +689,10 @@ public final class Gson {
    * @param json the string from which the object is to be deserialized
    * @param classOfT the class of T
    * @return an object of type T from the string. Returns {@code null} if {@code json} is {@code null}.
-   * @throws JsonSyntaxException if json is not a valid representation for an object of type
+   * @throws JtonSyntaxException if json is not a valid representation for an object of type
    * classOfT
    */
-  public <T> T fromJson(String json, Class<T> classOfT) throws JsonSyntaxException {
+  public <T> T fromJson(String json, Class<T> classOfT) throws JtonSyntaxException {
     Object object = fromJson(json, (Type) classOfT);
     return Primitives.wrap(classOfT).cast(object);
   }
@@ -712,11 +712,11 @@ public final class Gson {
    * Type typeOfT = new TypeToken&lt;Collection&lt;Foo&gt;&gt;(){}.getType();
    * </pre>
    * @return an object of type T from the string. Returns {@code null} if {@code json} is {@code null}.
-   * @throws JsonParseException if json is not a valid representation for an object of type typeOfT
-   * @throws JsonSyntaxException if json is not a valid representation for an object of type
+   * @throws JtonParseException if json is not a valid representation for an object of type typeOfT
+   * @throws JtonSyntaxException if json is not a valid representation for an object of type
    */
   @SuppressWarnings("unchecked")
-  public <T> T fromJson(String json, Type typeOfT) throws JsonSyntaxException {
+  public <T> T fromJson(String json, Type typeOfT) throws JtonSyntaxException {
     if (json == null) {
       return null;
     }
@@ -739,11 +739,11 @@ public final class Gson {
    * @param json the reader producing the Json from which the object is to be deserialized.
    * @param classOfT the class of T
    * @return an object of type T from the string. Returns {@code null} if {@code json} is at EOF.
-   * @throws JsonIOException if there was a problem reading from the Reader
-   * @throws JsonSyntaxException if json is not a valid representation for an object of type
+   * @throws JtonIOException if there was a problem reading from the Reader
+   * @throws JtonSyntaxException if json is not a valid representation for an object of type
    * @since 1.2
    */
-  public <T> T fromJson(Reader json, Class<T> classOfT) throws JsonSyntaxException, JsonIOException {
+  public <T> T fromJson(Reader json, Class<T> classOfT) throws JtonSyntaxException, JtonIOException {
     JsonReader jsonReader = new JsonReader(json);
     Object object = fromJson(jsonReader, classOfT);
     assertFullConsumption(object, jsonReader);
@@ -765,12 +765,12 @@ public final class Gson {
    * Type typeOfT = new TypeToken&lt;Collection&lt;Foo&gt;&gt;(){}.getType();
    * </pre>
    * @return an object of type T from the json. Returns {@code null} if {@code json} is at EOF.
-   * @throws JsonIOException if there was a problem reading from the Reader
-   * @throws JsonSyntaxException if json is not a valid representation for an object of type
+   * @throws JtonIOException if there was a problem reading from the Reader
+   * @throws JtonSyntaxException if json is not a valid representation for an object of type
    * @since 1.2
    */
   @SuppressWarnings("unchecked")
-  public <T> T fromJson(Reader json, Type typeOfT) throws JsonIOException, JsonSyntaxException {
+  public <T> T fromJson(Reader json, Type typeOfT) throws JtonIOException, JtonSyntaxException {
     JsonReader jsonReader = new JsonReader(json);
     T object = (T) fromJson(jsonReader, typeOfT);
     assertFullConsumption(object, jsonReader);
@@ -780,12 +780,12 @@ public final class Gson {
   private static void assertFullConsumption(Object obj, JsonReader reader) {
     try {
       if (obj != null && reader.peek() != JsonToken.END_DOCUMENT) {
-        throw new JsonIOException("JSON document was not fully consumed.");
+        throw new JtonIOException("JSON document was not fully consumed.");
       }
     } catch (MalformedJsonException e) {
-      throw new JsonSyntaxException(e);
+      throw new JtonSyntaxException(e);
     } catch (IOException e) {
-      throw new JsonIOException(e);
+      throw new JtonIOException(e);
     }
   }
 
@@ -794,11 +794,11 @@ public final class Gson {
    * of type {@code typeOfT}. Returns {@code null}, if the {@code reader} is at EOF.
    * Since Type is not parameterized by T, this method is type unsafe and should be used carefully
    *
-   * @throws JsonIOException if there was a problem writing to the Reader
-   * @throws JsonSyntaxException if json is not a valid representation for an object of type
+   * @throws JtonIOException if there was a problem writing to the Reader
+   * @throws JtonSyntaxException if json is not a valid representation for an object of type
    */
   @SuppressWarnings("unchecked")
-  public <T> T fromJson(JsonReader reader, Type typeOfT) throws JsonIOException, JsonSyntaxException {
+  public <T> T fromJson(JsonReader reader, Type typeOfT) throws JtonIOException, JtonSyntaxException {
     boolean isEmpty = true;
     boolean oldLenient = reader.isLenient();
     reader.setLenient(true);
@@ -817,12 +817,12 @@ public final class Gson {
       if (isEmpty) {
         return null;
       }
-      throw new JsonSyntaxException(e);
+      throw new JtonSyntaxException(e);
     } catch (IllegalStateException e) {
-      throw new JsonSyntaxException(e);
+      throw new JtonSyntaxException(e);
     } catch (IOException e) {
       // TODO(inder): Figure out whether it is indeed right to rethrow this as JsonSyntaxException
-      throw new JsonSyntaxException(e);
+      throw new JtonSyntaxException(e);
     } finally {
       reader.setLenient(oldLenient);
     }
@@ -841,10 +841,10 @@ public final class Gson {
    * be deserialized
    * @param classOfT The class of T
    * @return an object of type T from the json. Returns {@code null} if {@code json} is {@code null}.
-   * @throws JsonSyntaxException if json is not a valid representation for an object of type typeOfT
+   * @throws JtonSyntaxException if json is not a valid representation for an object of type typeOfT
    * @since 1.3
    */
-  public <T> T fromJson(JtonElement json, Class<T> classOfT) throws JsonSyntaxException {
+  public <T> T fromJson(JtonElement json, Class<T> classOfT) throws JtonSyntaxException {
     Object object = fromJson(json, (Type) classOfT);
     return Primitives.wrap(classOfT).cast(object);
   }
@@ -864,11 +864,11 @@ public final class Gson {
    * Type typeOfT = new TypeToken&lt;Collection&lt;Foo&gt;&gt;(){}.getType();
    * </pre>
    * @return an object of type T from the json. Returns {@code null} if {@code json} is {@code null}.
-   * @throws JsonSyntaxException if json is not a valid representation for an object of type typeOfT
+   * @throws JtonSyntaxException if json is not a valid representation for an object of type typeOfT
    * @since 1.3
    */
   @SuppressWarnings("unchecked")
-  public <T> T fromJson(JtonElement json, Type typeOfT) throws JsonSyntaxException {
+  public <T> T fromJson(JtonElement json, Type typeOfT) throws JtonSyntaxException {
     if (json == null) {
       return null;
     }

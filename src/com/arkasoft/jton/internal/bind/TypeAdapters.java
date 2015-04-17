@@ -37,11 +37,11 @@ import java.util.UUID;
 import com.arkasoft.jton.Gson;
 import com.arkasoft.jton.JtonArray;
 import com.arkasoft.jton.JtonElement;
-import com.arkasoft.jton.JsonIOException;
+import com.arkasoft.jton.JtonIOException;
 import com.arkasoft.jton.JtonNull;
 import com.arkasoft.jton.JtonObject;
 import com.arkasoft.jton.JtonPrimitive;
-import com.arkasoft.jton.JsonSyntaxException;
+import com.arkasoft.jton.JtonSyntaxException;
 import com.arkasoft.jton.TypeAdapter;
 import com.arkasoft.jton.TypeAdapterFactory;
 import com.arkasoft.jton.annotations.SerializedName;
@@ -106,12 +106,12 @@ public final class TypeAdapters {
           try {
             set = Integer.parseInt(stringValue) != 0;
           } catch (NumberFormatException e) {
-            throw new JsonSyntaxException(
+            throw new JtonSyntaxException(
                 "Error: Expecting: bitset number value (1, 0), Found: " + stringValue);
           }
           break;
         default:
-          throw new JsonSyntaxException("Invalid bitset value type: " + tokenType);
+          throw new JtonSyntaxException("Invalid bitset value type: " + tokenType);
         }
         if (set) {
           bitset.set(i);
@@ -194,7 +194,7 @@ public final class TypeAdapters {
         int intValue = in.nextInt();
         return (byte) intValue;
       } catch (NumberFormatException e) {
-        throw new JsonSyntaxException(e);
+        throw new JtonSyntaxException(e);
       }
     }
     @Override
@@ -216,7 +216,7 @@ public final class TypeAdapters {
       try {
         return (short) in.nextInt();
       } catch (NumberFormatException e) {
-        throw new JsonSyntaxException(e);
+        throw new JtonSyntaxException(e);
       }
     }
     @Override
@@ -238,7 +238,7 @@ public final class TypeAdapters {
       try {
         return in.nextInt();
       } catch (NumberFormatException e) {
-        throw new JsonSyntaxException(e);
+        throw new JtonSyntaxException(e);
       }
     }
     @Override
@@ -260,7 +260,7 @@ public final class TypeAdapters {
       try {
         return in.nextLong();
       } catch (NumberFormatException e) {
-        throw new JsonSyntaxException(e);
+        throw new JtonSyntaxException(e);
       }
     }
     @Override
@@ -310,7 +310,7 @@ public final class TypeAdapters {
       case NUMBER:
         return new LazilyParsedNumber(in.nextString());
       default:
-        throw new JsonSyntaxException("Expecting number, got: " + jsonToken);
+        throw new JtonSyntaxException("Expecting number, got: " + jsonToken);
       }
     }
     @Override
@@ -330,7 +330,7 @@ public final class TypeAdapters {
       }
       String str = in.nextString();
       if (str.length() != 1) {
-        throw new JsonSyntaxException("Expecting character, got: " + str);
+        throw new JtonSyntaxException("Expecting character, got: " + str);
       }
       return str.charAt(0);
     }
@@ -372,7 +372,7 @@ public final class TypeAdapters {
       try {
         return new BigDecimal(in.nextString());
       } catch (NumberFormatException e) {
-        throw new JsonSyntaxException(e);
+        throw new JtonSyntaxException(e);
       }
     }
 
@@ -390,7 +390,7 @@ public final class TypeAdapters {
       try {
         return new BigInteger(in.nextString());
       } catch (NumberFormatException e) {
-        throw new JsonSyntaxException(e);
+        throw new JtonSyntaxException(e);
       }
     }
 
@@ -466,7 +466,7 @@ public final class TypeAdapters {
         String nextString = in.nextString();
         return "null".equals(nextString) ? null : new URI(nextString);
       } catch (URISyntaxException e) {
-        throw new JsonIOException(e);
+        throw new JtonIOException(e);
       }
     }
     @Override

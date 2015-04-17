@@ -22,14 +22,14 @@ package com.arkasoft.jton;
  * @author Inderjeet Singh
  * @author Joel Leitch
  */
-public final class JsonIOException extends JsonParseException {
+public final class JtonIOException extends JtonParseException {
   private static final long serialVersionUID = 1L;
 
-  public JsonIOException(String msg) {
+  public JtonIOException(String msg) {
     super(msg);
   }
 
-  public JsonIOException(String msg, Throwable cause) {
+  public JtonIOException(String msg, Throwable cause) {
     super(msg, cause);
   }
 
@@ -39,7 +39,7 @@ public final class JsonIOException extends JsonParseException {
    *
    * @param cause root exception that caused this exception to be thrown.
    */
-  public JsonIOException(Throwable cause) {
+  public JtonIOException(Throwable cause) {
     super(cause);
   }
 }

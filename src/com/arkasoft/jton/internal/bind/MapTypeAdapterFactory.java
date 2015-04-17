@@ -19,7 +19,7 @@ package com.arkasoft.jton.internal.bind;
 import com.arkasoft.jton.Gson;
 import com.arkasoft.jton.JtonElement;
 import com.arkasoft.jton.JtonPrimitive;
-import com.arkasoft.jton.JsonSyntaxException;
+import com.arkasoft.jton.JtonSyntaxException;
 import com.arkasoft.jton.TypeAdapter;
 import com.arkasoft.jton.TypeAdapterFactory;
 import com.arkasoft.jton.internal.$Gson$Types;
@@ -174,7 +174,7 @@ public final class MapTypeAdapterFactory implements TypeAdapterFactory {
           V value = valueTypeAdapter.read(in);
           V replaced = map.put(key, value);
           if (replaced != null) {
-            throw new JsonSyntaxException("duplicate key: " + key);
+            throw new JtonSyntaxException("duplicate key: " + key);
           }
           in.endArray();
         }
@@ -187,7 +187,7 @@ public final class MapTypeAdapterFactory implements TypeAdapterFactory {
           V value = valueTypeAdapter.read(in);
           V replaced = map.put(key, value);
           if (replaced != null) {
-            throw new JsonSyntaxException("duplicate key: " + key);
+            throw new JtonSyntaxException("duplicate key: " + key);
           }
         }
         in.endObject();

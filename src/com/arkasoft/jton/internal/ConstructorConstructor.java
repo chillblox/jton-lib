@@ -17,7 +17,7 @@
 package com.arkasoft.jton.internal;
 
 import com.arkasoft.jton.InstanceCreator;
-import com.arkasoft.jton.JsonIOException;
+import com.arkasoft.jton.JtonIOException;
 import com.arkasoft.jton.reflect.TypeToken;
 
 import java.lang.reflect.Constructor;
@@ -143,10 +143,10 @@ public final class ConstructorConstructor {
               if (elementType instanceof Class) {
                 return (T) EnumSet.noneOf((Class)elementType);
               } else {
-                throw new JsonIOException("Invalid EnumSet type: " + type.toString());
+                throw new JtonIOException("Invalid EnumSet type: " + type.toString());
               }
             } else {
-              throw new JsonIOException("Invalid EnumSet type: " + type.toString());
+              throw new JtonIOException("Invalid EnumSet type: " + type.toString());
             }
           }
         };

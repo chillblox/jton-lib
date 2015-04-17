@@ -40,11 +40,11 @@ public final class JtonParser {
 	 *          JSON text
 	 * @return a parse tree of {@link JtonElement}s corresponding to the specified
 	 *         JSON
-	 * @throws JsonParseException
+	 * @throws JtonParseException
 	 *           if the specified text is not valid JSON
 	 * @since 1.3
 	 */
-	public static JtonElement parse(String json) throws JsonSyntaxException {
+	public static JtonElement parse(String json) throws JtonSyntaxException {
 		return parse(new StringReader(json));
 	}
 
@@ -55,44 +55,44 @@ public final class JtonParser {
 	 *          JSON text
 	 * @return a parse tree of {@link JtonElement}s corresponding to the specified
 	 *         JSON
-	 * @throws JsonParseException
+	 * @throws JtonParseException
 	 *           if the specified text is not valid JSON
 	 * @since 1.3
 	 */
-	public static JtonElement parse(Reader json) throws JsonIOException, JsonSyntaxException {
+	public static JtonElement parse(Reader json) throws JtonIOException, JtonSyntaxException {
 		try {
 			JsonReader jsonReader = new JsonReader(json);
 			JtonElement element = parse(jsonReader);
 			if (!element.isJtonNull() && jsonReader.peek() != JsonToken.END_DOCUMENT) {
-				throw new JsonSyntaxException("Did not consume the entire document.");
+				throw new JtonSyntaxException("Did not consume the entire document.");
 			}
 			return element;
 		} catch (MalformedJsonException e) {
-			throw new JsonSyntaxException(e);
+			throw new JtonSyntaxException(e);
 		} catch (IOException e) {
-			throw new JsonIOException(e);
+			throw new JtonIOException(e);
 		} catch (NumberFormatException e) {
-			throw new JsonSyntaxException(e);
+			throw new JtonSyntaxException(e);
 		}
 	}
 
 	/**
 	 * Returns the next value from the JSON stream as a parse tree.
 	 *
-	 * @throws JsonParseException
+	 * @throws JtonParseException
 	 *           if there is an IOException or if the specified text is not valid
 	 *           JSON
 	 * @since 1.6
 	 */
-	public static JtonElement parse(JsonReader json) throws JsonIOException, JsonSyntaxException {
+	public static JtonElement parse(JsonReader json) throws JtonIOException, JtonSyntaxException {
 		boolean lenient = json.isLenient();
 		json.setLenient(true);
 		try {
 			return Streams.parse(json);
 		} catch (StackOverflowError e) {
-			throw new JsonParseException("Failed parsing JSON source: " + json + " to Json", e);
+			throw new JtonParseException("Failed parsing JSON source: " + json + " to Json", e);
 		} catch (OutOfMemoryError e) {
-			throw new JsonParseException("Failed parsing JSON source: " + json + " to Json", e);
+			throw new JtonParseException("Failed parsing JSON source: " + json + " to Json", e);
 		} finally {
 			json.setLenient(lenient);
 		}

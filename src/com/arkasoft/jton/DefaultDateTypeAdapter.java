@@ -32,7 +32,7 @@ import java.util.TimeZone;
  * @author Inderjeet Singh
  * @author Joel Leitch
  */
-final class DefaultDateTypeAdapter implements JsonSerializer<Date>, JsonDeserializer<Date> {
+final class DefaultDateTypeAdapter implements JtonSerializer<Date>, JtonDeserializer<Date> {
 
   // TODO: migrate to streaming adapter
 
@@ -67,17 +67,17 @@ final class DefaultDateTypeAdapter implements JsonSerializer<Date>, JsonDeserial
 
   // These methods need to be synchronized since JDK DateFormat classes are not thread-safe
   // See issue 162
-  public JtonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
+  public JtonElement serialize(Date src, Type typeOfSrc, JtonSerializationContext context) {
     synchronized (localFormat) {
       String dateFormatAsString = enUsFormat.format(src);
       return new JtonPrimitive(dateFormatAsString);
     }
   }
 
-  public Date deserialize(JtonElement json, Type typeOfT, JsonDeserializationContext context)
-      throws JsonParseException {
+  public Date deserialize(JtonElement json, Type typeOfT, JtonDeserializationContext context)
+      throws JtonParseException {
     if (!(json instanceof JtonPrimitive)) {
-      throw new JsonParseException("The date should be a string value");
+      throw new JtonParseException("The date should be a string value");
     }
     Date date = deserializeToDate(json);
     if (typeOfT == Date.class) {
@@ -104,7 +104,7 @@ final class DefaultDateTypeAdapter implements JsonSerializer<Date>, JsonDeserial
       try {
         return iso8601Format.parse(json.getAsString());
       } catch (ParseException e) {
-        throw new JsonSyntaxException(json.getAsString(), e);
+        throw new JtonSyntaxException(json.getAsString(), e);
       }
     }
   }

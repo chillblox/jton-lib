@@ -49,7 +49,7 @@ import com.arkasoft.jton.stream.MalformedJsonException;
  * @author Joel Leitch
  * @since 1.4
  */
-public final class JsonStreamParser implements Iterator<JtonElement> {
+public final class JtonStreamParser implements Iterator<JtonElement> {
   private final JsonReader parser;
   private final Object lock;
 
@@ -57,7 +57,7 @@ public final class JsonStreamParser implements Iterator<JtonElement> {
    * @param json The string containing JSON elements concatenated to each other.
    * @since 1.4
    */
-  public JsonStreamParser(String json) {
+  public JtonStreamParser(String json) {
     this(new StringReader(json));      
   }
   
@@ -65,7 +65,7 @@ public final class JsonStreamParser implements Iterator<JtonElement> {
    * @param reader The data stream containing JSON elements concatenated to each other.
    * @since 1.4
    */
-  public JsonStreamParser(Reader reader) {
+  public JtonStreamParser(Reader reader) {
     parser = new JsonReader(reader);
     parser.setLenient(true);
     lock = new Object();
@@ -75,10 +75,10 @@ public final class JsonStreamParser implements Iterator<JtonElement> {
    * Returns the next available {@link JtonElement} on the reader. Null if none available.
    * 
    * @return the next available {@link JtonElement} on the reader. Null if none available.
-   * @throws JsonParseException if the incoming stream is malformed JSON.
+   * @throws JtonParseException if the incoming stream is malformed JSON.
    * @since 1.4
    */
-  public JtonElement next() throws JsonParseException {
+  public JtonElement next() throws JtonParseException {
     if (!hasNext()) {
       throw new NoSuchElementException();
     }
@@ -86,10 +86,10 @@ public final class JsonStreamParser implements Iterator<JtonElement> {
     try {
       return Streams.parse(parser);
     } catch (StackOverflowError e) {
-      throw new JsonParseException("Failed parsing JSON source to Json", e);
+      throw new JtonParseException("Failed parsing JSON source to Json", e);
     } catch (OutOfMemoryError e) {
-      throw new JsonParseException("Failed parsing JSON source to Json", e);
-    } catch (JsonParseException e) {
+      throw new JtonParseException("Failed parsing JSON source to Json", e);
+    } catch (JtonParseException e) {
       throw e.getCause() instanceof EOFException ? new NoSuchElementException() : e;
     }
   }
@@ -104,9 +104,9 @@ public final class JsonStreamParser implements Iterator<JtonElement> {
       try {
         return parser.peek() != JsonToken.END_DOCUMENT;
       } catch (MalformedJsonException e) {
-        throw new JsonSyntaxException(e);
+        throw new JtonSyntaxException(e);
       } catch (IOException e) {
-        throw new JsonIOException(e);
+        throw new JtonIOException(e);
       }
     }
   }

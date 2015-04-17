@@ -18,7 +18,7 @@ package com.arkasoft.jton.internal.bind;
 
 import com.arkasoft.jton.FieldNamingStrategy;
 import com.arkasoft.jton.Gson;
-import com.arkasoft.jton.JsonSyntaxException;
+import com.arkasoft.jton.JtonSyntaxException;
 import com.arkasoft.jton.TypeAdapter;
 import com.arkasoft.jton.TypeAdapterFactory;
 import com.arkasoft.jton.annotations.JsonAdapter;
@@ -197,7 +197,7 @@ public final class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
           }
         }
       } catch (IllegalStateException e) {
-        throw new JsonSyntaxException(e);
+        throw new JtonSyntaxException(e);
       } catch (IllegalAccessException e) {
         throw new AssertionError(e);
       }

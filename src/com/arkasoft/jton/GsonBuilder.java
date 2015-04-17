@@ -429,8 +429,8 @@ public final class GsonBuilder {
 
   /**
    * Configures Gson for custom serialization or deserialization. This method combines the
-   * registration of an {@link TypeAdapter}, {@link InstanceCreator}, {@link JsonSerializer}, and a
-   * {@link JsonDeserializer}. It is best used when a single object {@code typeAdapter} implements
+   * registration of an {@link TypeAdapter}, {@link InstanceCreator}, {@link JtonSerializer}, and a
+   * {@link JtonDeserializer}. It is best used when a single object {@code typeAdapter} implements
    * all the required interfaces for custom serialization with Gson. If a type adapter was
    * previously registered for the specified {@code type}, it is overwritten.
    *
@@ -440,19 +440,19 @@ public final class GsonBuilder {
    *
    * @param type the type definition for the type adapter being registered
    * @param typeAdapter This object must implement at least one of the {@link TypeAdapter},
-   * {@link InstanceCreator}, {@link JsonSerializer}, and a {@link JsonDeserializer} interfaces.
+   * {@link InstanceCreator}, {@link JtonSerializer}, and a {@link JtonDeserializer} interfaces.
    * @return a reference to this {@code GsonBuilder} object to fulfill the "Builder" pattern
    */
   @SuppressWarnings({"unchecked", "rawtypes"})
   public GsonBuilder registerTypeAdapter(Type type, Object typeAdapter) {
-    $Gson$Preconditions.checkArgument(typeAdapter instanceof JsonSerializer<?>
-        || typeAdapter instanceof JsonDeserializer<?>
+    $Gson$Preconditions.checkArgument(typeAdapter instanceof JtonSerializer<?>
+        || typeAdapter instanceof JtonDeserializer<?>
         || typeAdapter instanceof InstanceCreator<?>
         || typeAdapter instanceof TypeAdapter<?>);
     if (typeAdapter instanceof InstanceCreator<?>) {
       instanceCreators.put(type, (InstanceCreator) typeAdapter);
     }
-    if (typeAdapter instanceof JsonSerializer<?> || typeAdapter instanceof JsonDeserializer<?>) {
+    if (typeAdapter instanceof JtonSerializer<?> || typeAdapter instanceof JtonDeserializer<?>) {
       TypeToken<?> typeToken = TypeToken.get(type);
       factories.add(TreeTypeAdapter.newFactoryWithMatchRawType(typeToken, typeAdapter));
     }
@@ -477,24 +477,24 @@ public final class GsonBuilder {
 
   /**
    * Configures Gson for custom serialization or deserialization for an inheritance type hierarchy.
-   * This method combines the registration of a {@link TypeAdapter}, {@link JsonSerializer} and
-   * a {@link JsonDeserializer}. If a type adapter was previously registered for the specified
+   * This method combines the registration of a {@link TypeAdapter}, {@link JtonSerializer} and
+   * a {@link JtonDeserializer}. If a type adapter was previously registered for the specified
    * type hierarchy, it is overridden. If a type adapter is registered for a specific type in
    * the type hierarchy, it will be invoked instead of the one registered for the type hierarchy.
    *
    * @param baseType the class definition for the type adapter being registered for the base class
    *        or interface
    * @param typeAdapter This object must implement at least one of {@link TypeAdapter},
-   *        {@link JsonSerializer} or {@link JsonDeserializer} interfaces.
+   *        {@link JtonSerializer} or {@link JtonDeserializer} interfaces.
    * @return a reference to this {@code GsonBuilder} object to fulfill the "Builder" pattern
    * @since 1.7
    */
   @SuppressWarnings({"unchecked", "rawtypes"})
   public GsonBuilder registerTypeHierarchyAdapter(Class<?> baseType, Object typeAdapter) {
-    $Gson$Preconditions.checkArgument(typeAdapter instanceof JsonSerializer<?>
-        || typeAdapter instanceof JsonDeserializer<?>
+    $Gson$Preconditions.checkArgument(typeAdapter instanceof JtonSerializer<?>
+        || typeAdapter instanceof JtonDeserializer<?>
         || typeAdapter instanceof TypeAdapter<?>);
-    if (typeAdapter instanceof JsonDeserializer || typeAdapter instanceof JsonSerializer) {
+    if (typeAdapter instanceof JtonDeserializer || typeAdapter instanceof JtonSerializer) {
       hierarchyFactories.add(0,
           TreeTypeAdapter.newTypeHierarchyFactory(baseType, typeAdapter));
     }
