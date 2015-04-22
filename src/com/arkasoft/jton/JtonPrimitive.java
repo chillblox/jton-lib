@@ -84,17 +84,27 @@ public final class JtonPrimitive extends JtonElement {
 	public JtonPrimitive(Character c) {
 		setValue(c);
 	}
+	
+	/**
+	 * Create a primitive containing a {@link Date}.
+	 *
+	 * @param c
+	 *          the value to create the primitive with.
+	 */
+	public JtonPrimitive(Date c) {
+		setValue(c);
+	}
 
-//	/**
-//	 * Create a primitive using the specified Object. It must be an instance of
-//	 * {@link Number}, a {@link Date}, a Java primitive type, or a String.
-//	 *
-//	 * @param primitive
-//	 *          the value to create the primitive with.
-//	 */
-//	JtonPrimitive(Object primitive) {
-//		setValue(primitive);
-//	}
+	/**
+	 * Create a primitive using the specified Object. It must be an instance of
+	 * {@link Number}, a {@link Date}, a Java primitive type, or a String.
+	 *
+	 * @param primitive
+	 *          the value to create the primitive with.
+	 */
+	JtonPrimitive(Object primitive) {
+		setValue(primitive);
+	}
 
 	/**
 	 * Create a primitive using the specified Object. It must be an instance of
@@ -116,6 +126,7 @@ public final class JtonPrimitive extends JtonElement {
 		return this;
 	}
 
+	@Override
 	public boolean isTransient() {
 		return jtonTransient;
 	}

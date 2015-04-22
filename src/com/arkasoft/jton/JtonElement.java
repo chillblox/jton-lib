@@ -79,6 +79,15 @@ public abstract class JtonElement {
 	public boolean isJtonNull() {
 		return this instanceof JtonNull;
 	}
+	
+	/**
+	 * provides check for verifying if this element is a transient or not.
+	 * 
+	 * @return true if this element is transient, false otherwise.
+	 */
+	public boolean isTransient() {
+		return false;
+	}
 
 	/**
 	 * convenience method to get this element as a {@link JtonObject}. If the
