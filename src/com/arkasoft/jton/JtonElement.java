@@ -184,7 +184,7 @@ public abstract class JtonElement {
 	public boolean getAsBoolean(boolean fallback) {
 		try {
 			return isJtonPrimitive() ? getAsBoolean() : fallback;
-		} catch (ClassCastException e) {
+		} catch (Exception e) {
 			return fallback;
 		}
 	}
@@ -238,7 +238,7 @@ public abstract class JtonElement {
 	public String getAsString(String fallback) {
 		try {
 			return isJtonPrimitive() ? getAsString() : fallback;
-		} catch (ClassCastException e) {
+		} catch (Exception e) {
 			return fallback;
 		}
 	}
@@ -261,7 +261,7 @@ public abstract class JtonElement {
 	public double getAsDouble(double fallback) {
 		try {
 			return isJtonPrimitive() ? getAsDouble() : fallback;
-		} catch (ClassCastException e) {
+		} catch (Exception e) {
 			return fallback;
 		}
 	}
@@ -284,7 +284,7 @@ public abstract class JtonElement {
 	public float getAsFloat(float fallback) {
 		try {
 			return isJtonPrimitive() ? getAsFloat() : fallback;
-		} catch (ClassCastException e) {
+		} catch (Exception e) {
 			return fallback;
 		}
 	}
@@ -307,7 +307,7 @@ public abstract class JtonElement {
 	public long getAsLong(long fallback) {
 		try {
 			return isJtonPrimitive() ? getAsLong() : fallback;
-		} catch (ClassCastException e) {
+		} catch (Exception e) {
 			return fallback;
 		}
 	}
@@ -330,7 +330,7 @@ public abstract class JtonElement {
 	public int getAsInt(int fallback) {
 		try {
 			return isJtonPrimitive() ? getAsInt() : fallback;
-		} catch (ClassCastException e) {
+		} catch (Exception e) {
 			return fallback;
 		}
 	}
@@ -354,7 +354,7 @@ public abstract class JtonElement {
 	public byte getAsByte(byte fallback) {
 		try {
 			return isJtonPrimitive() ? getAsByte() : fallback;
-		} catch (ClassCastException e) {
+		} catch (Exception e) {
 			return fallback;
 		}
 	}
@@ -378,7 +378,7 @@ public abstract class JtonElement {
 	public char getAsCharacter(char fallback) {
 		try {
 			return isJtonPrimitive() ? getAsCharacter() : fallback;
-		} catch (ClassCastException e) {
+		} catch (Exception e) {
 			return fallback;
 		}
 	}
@@ -403,7 +403,7 @@ public abstract class JtonElement {
 	public BigDecimal getAsBigDecimal(BigDecimal fallback) {
 		try {
 			return isJtonPrimitive() ? getAsBigDecimal() : fallback;
-		} catch (ClassCastException e) {
+		} catch (Exception e) {
 			return fallback;
 		}
 	}
@@ -428,7 +428,7 @@ public abstract class JtonElement {
 	public BigInteger getAsBigInteger(BigInteger fallback) {
 		try {
 			return isJtonPrimitive() ? getAsBigInteger() : fallback;
-		} catch (ClassCastException e) {
+		} catch (Exception e) {
 			return fallback;
 		}
 	}
@@ -463,7 +463,7 @@ public abstract class JtonElement {
 	public Date getAsDate(Date fallback) {
 		try {
 			return isJtonPrimitive() ? getAsDate() : fallback;
-		} catch (ClassCastException e) {
+		} catch (Exception e) {
 			return fallback;
 		}
 	}
