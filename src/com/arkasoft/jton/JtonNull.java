@@ -33,7 +33,7 @@ public final class JtonNull extends JtonElement {
   public static final JtonNull INSTANCE = new JtonNull();
 
   @Override
-  JtonNull deepCopy() {
+	public JtonNull deepCopy() {
     return INSTANCE;
   }
 

@@ -16,6 +16,11 @@
 
 package com.arkasoft.jton;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Calendar;
@@ -122,7 +127,22 @@ public final class JtonPrimitive extends JtonElement {
 	}
 
 	@Override
-	JtonPrimitive deepCopy() {
+	public JtonPrimitive deepCopy() {
+		if (!isTransient()) {
+			try {
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				ObjectOutputStream oos = new ObjectOutputStream(baos);
+				oos.writeObject(this.value);
+
+				ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+				ObjectInputStream ois = new ObjectInputStream(bais);
+				return new JtonPrimitive(ois.readObject());
+			} catch (IOException e) {
+				// ignore
+			} catch (ClassNotFoundException e) {
+				// ignore
+			}
+		}
 		return this;
 	}
 

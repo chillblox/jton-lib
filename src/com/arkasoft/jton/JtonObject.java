@@ -37,7 +37,7 @@ public final class JtonObject extends JtonElement implements
 	private final LinkedTreeMap<String, JtonElement> members = new LinkedTreeMap<String, JtonElement>();
 
 	@Override
-	JtonObject deepCopy() {
+	public JtonObject deepCopy() {
 		JtonObject result = new JtonObject();
 		for (Map.Entry<String, JtonElement> entry : members.entrySet()) {
 			result.add(entry.getKey(), entry.getValue().deepCopy());
@@ -149,7 +149,14 @@ public final class JtonObject extends JtonElement implements
 	 *            the value associated with the member.
 	 */
 	public void add(String property, Object value) {
-		add(property, createJsonElement(value));
+		if (value == null) {
+			value = JtonNull.INSTANCE;
+			members.put(property, (JtonElement) value);
+		} else if (value instanceof JtonElement) {
+			members.put(property, (JtonElement) value);
+		} else {
+			add(property, createJsonElement(value));
+		}
 	}
 
 	/**

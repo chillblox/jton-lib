@@ -41,7 +41,7 @@ public final class JtonArray extends JtonElement implements Iterable<JtonElement
   }
 
   @Override
-  JtonArray deepCopy() {
+	public JtonArray deepCopy() {
     JtonArray result = new JtonArray();
     for (JtonElement element : elements) {
       result.add(element.deepCopy());

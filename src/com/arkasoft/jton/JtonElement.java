@@ -38,7 +38,7 @@ public abstract class JtonElement {
 	 * Returns a deep copy of this element. Immutable elements like primitives and
 	 * nulls are not copied.
 	 */
-	abstract JtonElement deepCopy();
+	public abstract JtonElement deepCopy();
 
 	/**
 	 * provides check for verifying if this element is an array or not.
