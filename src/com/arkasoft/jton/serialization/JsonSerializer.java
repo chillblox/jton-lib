@@ -30,11 +30,10 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
-import java.util.List;
-import java.util.Map;
 
 import com.arkasoft.jton.JtonArray;
 import com.arkasoft.jton.JtonElement;
+import com.arkasoft.jton.JtonIOException;
 import com.arkasoft.jton.JtonNull;
 import com.arkasoft.jton.JtonObject;
 import com.arkasoft.jton.JtonPrimitive;
@@ -542,7 +541,7 @@ public class JsonSerializer implements Serializer<JtonElement> {
 			throw new IllegalArgumentException("writer is null.");
 		}
 
-		if (object == null) {
+		if (object.isJtonNull()) {
 			writer.append("null");
 		} else if (object.isJtonPrimitive()) {
 			JtonPrimitive o = object.getAsJtonPrimitive();
@@ -687,6 +686,10 @@ public class JsonSerializer implements Serializer<JtonElement> {
 	public String getMIMEType(JtonElement object) {
 		return MIME_TYPE + "; charset=" + charset.name();
 	}
+	
+	//
+	// Static helpers
+	//
 
 	/**
 	 * Converts a JSON value to a Java object.
@@ -696,153 +699,14 @@ public class JsonSerializer implements Serializer<JtonElement> {
 	 *
 	 * @return The parsed object.
 	 */
-	public static Object parse(String json) throws SerializationException {
+	public static JtonElement parse(String json) throws SerializationException {
 		JsonSerializer jsonSerializer = new JsonSerializer();
 
-		Object object;
 		try {
-			object = jsonSerializer.readObject(new StringReader(json));
+			return jsonSerializer.readObject(new StringReader(json));
 		} catch (IOException exception) {
-			throw new RuntimeException(exception);
+			throw new JtonIOException(exception);
 		}
-
-		return object;
-	}
-
-	/**
-	 * Converts a JSON value to a string.
-	 *
-	 * @param json
-	 *          The JSON value.
-	 *
-	 * @return The parsed string.
-	 */
-	public static String parseString(String json) throws SerializationException {
-		return (String) parse(json);
-	}
-
-	/**
-	 * Converts a JSON value to a number.
-	 *
-	 * @param json
-	 *          The JSON value.
-	 *
-	 * @return The parsed number.
-	 */
-	public static Number parseNumber(String json) throws SerializationException {
-		return (Number) parse(json);
-	}
-
-	/**
-	 * Converts a JSON value to a short.
-	 *
-	 * @param json
-	 *          The JSON value.
-	 *
-	 * @return The parsed short.
-	 */
-	public static Short parseShort(String json) throws SerializationException {
-		return (Short) parse(json);
-	}
-
-	/**
-	 * Converts a JSON value to a integer.
-	 *
-	 * @param json
-	 *          The JSON value.
-	 *
-	 * @return The parsed integer.
-	 */
-	public static Integer parseInteger(String json) throws SerializationException {
-		return (Integer) parse(json);
-	}
-
-	/**
-	 * Converts a JSON value to a long.
-	 *
-	 * @param json
-	 *          The JSON value.
-	 *
-	 * @return The parsed number.
-	 */
-	public static Long parseLong(String json) throws SerializationException {
-		return (Long) parse(json);
-	}
-
-	/**
-	 * Converts a JSON value to a float.
-	 *
-	 * @param json
-	 *          The JSON value.
-	 *
-	 * @return The parsed float.
-	 */
-	public static Float parseFloat(String json) throws SerializationException {
-		return (Float) parse(json);
-	}
-
-	/**
-	 * Converts a JSON value to a double.
-	 *
-	 * @param json
-	 *          The JSON value.
-	 *
-	 * @return The parsed double.
-	 */
-	public static Double parseDouble(String json) throws SerializationException {
-		return (Double) parse(json);
-	}
-
-	/**
-	 * Converts a JSON value to a boolean.
-	 *
-	 * @param json
-	 *          The JSON value.
-	 *
-	 * @return The parsed boolean.
-	 */
-	public static Boolean parseBoolean(String json) throws SerializationException {
-		return (Boolean) parse(json);
-	}
-
-	/**
-	 * Converts a JSON value to a list.
-	 *
-	 * @param json
-	 *          The JSON value.
-	 *
-	 * @return The parsed list.
-	 */
-	public static List<?> parseList(String json) throws SerializationException {
-		return (List<?>) parse(json);
-	}
-
-	/**
-	 * Converts a JSON value to a map.
-	 *
-	 * @param json
-	 *          The JSON value.
-	 *
-	 * @return The parsed map.
-	 */
-	@SuppressWarnings("unchecked")
-	public static Map<String, ?> parseMap(String json) throws SerializationException {
-		return (Map<String, ?>) parse(json);
-	}
-
-	/**
-	 * Converts a object to a JSON string representation. The map keys will always
-	 * be quote-delimited.
-	 *
-	 * @param value
-	 *          The object to convert.
-	 *
-	 * @return The resulting JSON string.
-	 *
-	 * @see #toString(Object, boolean)
-	 */
-	public static String toString(JtonElement value) throws SerializationException {
-		return toString(value, false);
 	}
 
 	/**
@@ -866,7 +730,7 @@ public class JsonSerializer implements Serializer<JtonElement> {
 		try {
 			jsonSerializer.writeObject(value, writer);
 		} catch (IOException exception) {
-			throw new RuntimeException(exception);
+			throw new JtonIOException(exception);
 		}
 
 		return writer.toString();

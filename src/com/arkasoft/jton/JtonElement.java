@@ -16,8 +16,6 @@
 
 package com.arkasoft.jton;
 
-import java.io.IOException;
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
@@ -518,11 +516,8 @@ public abstract class JtonElement {
 	@Override
 	public String toString() {
 		try {
-			StringWriter stringWriter = new StringWriter();
-			JsonSerializer s = new JsonSerializer();
-			s.writeObject(this, stringWriter);
-			return stringWriter.toString();
-		} catch (IOException e) {
+			return JsonSerializer.toString(this, true);
+		} catch (JtonIOException e) {
 			throw new AssertionError(e);
 		} catch (SerializationException e) {
 			throw new AssertionError(e);

@@ -26,6 +26,8 @@ public class Test {
 		JtonArray arr = new JtonArray();
 		arr.add(new JtonPrimitive(5));
 		arr.add(new JtonPrimitive("Hello"));
+		arr.add(o.deepCopy());
+		arr.add(o.deepCopy());
 		o.add("array", arr);
 		
 		o.add("object", o.deepCopy());
