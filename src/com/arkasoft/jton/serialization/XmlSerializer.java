@@ -8,6 +8,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -26,6 +28,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import com.arkasoft.jton.JtonArray;
 import com.arkasoft.jton.JtonElement;
+import com.arkasoft.jton.JtonIOException;
 import com.arkasoft.jton.JtonNull;
 import com.arkasoft.jton.JtonObject;
 import com.arkasoft.jton.JtonPrimitive;
@@ -72,7 +75,8 @@ public class XmlSerializer implements Serializer<JtonObject> {
 		return element;
 	}
 
-	public JtonObject readObject(Reader reader) throws SerializationException {
+	public JtonObject readObject(Reader reader) 
+			throws IOException, SerializationException {
 		if (reader == null) {
 			throw new IllegalArgumentException("reader is null.");
 		}
@@ -95,7 +99,7 @@ public class XmlSerializer implements Serializer<JtonObject> {
 				case XMLStreamConstants.CHARACTERS: {
 					if (!xmlStreamReader.isWhiteSpace()) {
 						if (current != null) {
-							current.setText(xmlStreamReader.getText());
+							current.text = xmlStreamReader.getText();
 						}
 					}
 					break;
@@ -121,8 +125,7 @@ public class XmlSerializer implements Serializer<JtonObject> {
 						String attributeLocalName = xmlStreamReader.getAttributeLocalName(i);
 
 						if ("type".equalsIgnoreCase(attributeLocalName)) {
-							String type = xmlStreamReader.getAttributeValue(i);
-							element.setType(type);
+							element.type = xmlStreamReader.getAttributeValue(i);
 							break;
 						}
 					}
@@ -141,7 +144,7 @@ public class XmlSerializer implements Serializer<JtonObject> {
 
 					// Move up the stack
 					if (current != null) {
-						current = current.getParent();
+						current = current.parent;
 					}
 
 					break;
@@ -382,10 +385,11 @@ public class XmlSerializer implements Serializer<JtonObject> {
 		return MIME_TYPE + "; charset=" + charset.name();
 	}
 
+	@SuppressWarnings("serial")
 	private class Element extends ArrayList<Element> {
-		private Element parent = null;
-		private String type = null;
-		private String text = null;
+		Element parent = null;
+		String type = null;
+		String text = null;
 
 		private final String name;
 
@@ -395,42 +399,14 @@ public class XmlSerializer implements Serializer<JtonObject> {
 			this.name = name;
 		}
 
-		String getName() {
-			return name;
-		}
-
-		Element getParent() {
-			return parent;
-		}
-
-		void setParent(Element parent) {
-			this.parent = parent;
-		}
-
-		String getType() {
-			return type;
-		}
-
-		void setType(String type) {
-			this.type = type;
-		}
-
-		String getText() {
-			return text;
-		}
-
-		void setText(String text) {
-			this.text = text;
-		}
-
 		@Override
 		public boolean add(Element element) {
-			if (element.getParent() != null) {
+			if (element.parent != null) {
 				return false;
 			}
 			if (super.add(element)) {
-				element.setParent(this);
-				String prop = element.getName();
+				element.parent = this;
+				String prop = element.name;
 				if (members.containsKey(prop)) {
 					if (!members.get(prop)) {
 						members.put(prop, Boolean.TRUE);
@@ -498,6 +474,50 @@ public class XmlSerializer implements Serializer<JtonObject> {
 				}
 			}
 		}
+	}
+	
+	//
+	// Static helpers
+	//
+
+	/**
+	 * Converts a XML value to a Java object.
+	 *
+	 * @param xml
+	 *          The XML value.
+	 *
+	 * @return The parsed object.
+	 */
+	public static JtonObject parse(String xml) throws SerializationException {
+		XmlSerializer xmlSerializer = new XmlSerializer();
+
+		try {
+			return xmlSerializer.readObject(new StringReader(xml));
+		} catch (IOException exception) {
+			throw new JtonIOException(exception);
+		}
+	}
+
+	/**
+	 * Converts a object to a XML string representation.
+	 *
+	 * @param object
+	 *          The object to convert.
+	 *
+	 * @return The resulting XML string.
+	 */
+	public static String toString(JtonObject object) throws SerializationException {
+		XmlSerializer xmlSerializer = new XmlSerializer();
+
+		StringWriter writer = new StringWriter();
+
+		try {
+			xmlSerializer.writeObject(object, writer);
+		} catch (IOException exception) {
+			throw new JtonIOException(exception);
+		}
+
+		return writer.toString();
 	}
 
 }
