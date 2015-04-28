@@ -9,10 +9,14 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.bind.DatatypeConverter;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -22,6 +26,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import com.arkasoft.jton.JtonArray;
 import com.arkasoft.jton.JtonElement;
+import com.arkasoft.jton.JtonNull;
 import com.arkasoft.jton.JtonObject;
 import com.arkasoft.jton.JtonPrimitive;
 
@@ -76,19 +81,23 @@ public class XmlSerializer implements Serializer<JtonObject> {
 		XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
 		xmlInputFactory.setProperty("javax.xml.stream.isCoalescing", true);
 
-		JtonObject document = null;
+		Element document = null;
 
 		try {
 			XMLStreamReader xmlStreamReader = xmlInputFactory.createXMLStreamReader(reader);
 
-			JtonElement current = null;
+			Element current = null;
 
 			while (xmlStreamReader.hasNext()) {
 				int event = xmlStreamReader.next();
 
 				switch (event) {
 				case XMLStreamConstants.CHARACTERS: {
-
+					if (!xmlStreamReader.isWhiteSpace()) {
+						if (current != null) {
+							current.setText(xmlStreamReader.getText());
+						}
+					}
 					break;
 				}
 				case XMLStreamConstants.START_ELEMENT: {
@@ -99,19 +108,45 @@ public class XmlSerializer implements Serializer<JtonObject> {
 					}
 
 					String localName = xmlStreamReader.getLocalName();
-					
-					if (current == null) {
-						
+
+					Element element = new Element(localName);
+
+					// Get the element's attributes
+					for (int i = 0, n = xmlStreamReader.getAttributeCount(); i < n; i++) {
+						String attributePrefix = xmlStreamReader.getAttributePrefix(i);
+						if (attributePrefix != null && attributePrefix.length() == 0) {
+							attributePrefix = null;
+						}
+
+						String attributeLocalName = xmlStreamReader.getAttributeLocalName(i);
+
+						if ("type".equalsIgnoreCase(attributeLocalName)) {
+							String type = xmlStreamReader.getAttributeValue(i);
+							element.setType(type);
+							break;
+						}
 					}
+
+					if (current == null) {
+						document = element;
+					} else {
+						current.add(element);
+					}
+
+					current = element;
 
 					break;
 				}
 				case XMLStreamConstants.END_ELEMENT: {
 
+					// Move up the stack
+					if (current != null) {
+						current = current.getParent();
+					}
+
 					break;
 				}
 				default: {
-
 					break;
 				}
 				}
@@ -120,8 +155,7 @@ public class XmlSerializer implements Serializer<JtonObject> {
 			throw new SerializationException(exception);
 		}
 
-		return document;
-
+		return (JtonObject) document.toJton();
 	}
 
 	@Override
@@ -186,38 +220,40 @@ public class XmlSerializer implements Serializer<JtonObject> {
 			// ---
 
 			if (element.isJtonNull()) {
-				xmlStreamWriter.writeStartElement(key);
-				xmlStreamWriter.writeCharacters("null");
-				xmlStreamWriter.writeEndElement();
-			} else if (element.isJtonPrimitive()) {
-				xmlStreamWriter.writeStartElement(key);
-				String type;
+				xmlStreamWriter.writeEmptyElement(key);
+				xmlStreamWriter.writeAttribute("type", "null");
+			} else {
+				if (element.isJtonPrimitive()) {
+					xmlStreamWriter.writeStartElement(key);
+					String type;
 
-				Object value = element.getValue();
-				if (value instanceof Boolean) {
-					type = "bool";
-				} else if (value instanceof Integer) {
-					type = "int";
-				} else if (value instanceof BigInteger) {
-					type = "bigint";
-				} else if (value instanceof java.sql.Date) {
-					type = "sqldate";
-				} else if (value instanceof java.sql.Time) {
-					type = "sqltime";
-				} else if (value instanceof java.sql.Timestamp) {
-					type = "sqltstamp";
+					Object value = element.getValue();
+					if (value instanceof Boolean) {
+						type = "bool";
+					} else if (value instanceof Integer) {
+						type = "int";
+					} else if (value instanceof BigInteger) {
+						type = "bigint";
+					} else if (value instanceof java.sql.Date) {
+						type = "sqldate";
+					} else if (value instanceof java.sql.Time) {
+						type = "sqltime";
+					} else if (value instanceof java.sql.Timestamp) {
+						type = "sqltstamp";
+					} else {
+						type = value.getClass().getSimpleName().toLowerCase();
+					}
+
+					xmlStreamWriter.writeAttribute("type", type);
+					writeTextNode(element.getAsJtonPrimitive(), xmlStreamWriter);
+
+				} else if (element.isJtonArray()) {
+					writeArray(key, element.getAsJtonArray(), xmlStreamWriter);
 				} else {
-					type = value.getClass().getSimpleName().toLowerCase();
+					writeObject(key, element.getAsJtonObject(), xmlStreamWriter);
 				}
 
-				xmlStreamWriter.writeAttribute("type", type);
-				writeTextNode(element.getAsJtonPrimitive(), xmlStreamWriter);
 				xmlStreamWriter.writeEndElement();
-
-			} else if (element.isJtonArray()) {
-				writeArray(key, element.getAsJtonArray(), xmlStreamWriter);
-			} else {
-				writeObject(key, element.getAsJtonObject(), xmlStreamWriter);
 			}
 		}
 
@@ -232,38 +268,40 @@ public class XmlSerializer implements Serializer<JtonObject> {
 		// Write out the child nodes
 		for (JtonElement element : object) {
 			if (element.isJtonNull()) {
-				xmlStreamWriter.writeStartElement(key);
-				xmlStreamWriter.writeCharacters("null");
-				xmlStreamWriter.writeEndElement();
-			} else if (element.isJtonPrimitive()) {
-				xmlStreamWriter.writeStartElement(key);
-				String type;
+				xmlStreamWriter.writeEmptyElement(key);
+				xmlStreamWriter.writeAttribute("type", "null");
+			} else {
+				if (element.isJtonPrimitive()) {
+					xmlStreamWriter.writeStartElement(key);
+					String type;
 
-				Object value = element.getValue();
-				if (value instanceof Boolean) {
-					type = "bool";
-				} else if (value instanceof Integer) {
-					type = "int";
-				} else if (value instanceof BigInteger) {
-					type = "bigint";
-				} else if (value instanceof java.sql.Date) {
-					type = "sqldate";
-				} else if (value instanceof java.sql.Time) {
-					type = "sqltime";
-				} else if (value instanceof java.sql.Timestamp) {
-					type = "sqltstamp";
+					Object value = element.getValue();
+					if (value instanceof Boolean) {
+						type = "bool";
+					} else if (value instanceof Integer) {
+						type = "int";
+					} else if (value instanceof BigInteger) {
+						type = "bigint";
+					} else if (value instanceof java.sql.Date) {
+						type = "sqldate";
+					} else if (value instanceof java.sql.Time) {
+						type = "sqltime";
+					} else if (value instanceof java.sql.Timestamp) {
+						type = "sqltstamp";
+					} else {
+						type = value.getClass().getSimpleName().toLowerCase();
+					}
+
+					xmlStreamWriter.writeAttribute("type", type);
+					writeTextNode(element.getAsJtonPrimitive(), xmlStreamWriter);
+
+				} else if (element.isJtonArray()) {
+					writeArray(key, element.getAsJtonArray(), xmlStreamWriter);
 				} else {
-					type = value.getClass().getSimpleName().toLowerCase();
+					writeObject(key, element.getAsJtonObject(), xmlStreamWriter);
 				}
 
-				xmlStreamWriter.writeAttribute("type", type);
-				writeTextNode(element.getAsJtonPrimitive(), xmlStreamWriter);
 				xmlStreamWriter.writeEndElement();
-
-			} else if (element.isJtonArray()) {
-				writeArray(key, element.getAsJtonArray(), xmlStreamWriter);
-			} else {
-				writeObject(key, element.getAsJtonObject(), xmlStreamWriter);
 			}
 		}
 	}
@@ -342,6 +380,124 @@ public class XmlSerializer implements Serializer<JtonObject> {
 	@Override
 	public String getMIMEType(JtonObject object) {
 		return MIME_TYPE + "; charset=" + charset.name();
+	}
+
+	private class Element extends ArrayList<Element> {
+		private Element parent = null;
+		private String type = null;
+		private String text = null;
+
+		private final String name;
+
+		private final Map<String, Boolean> members = new HashMap<String, Boolean>();
+
+		public Element(String name) {
+			this.name = name;
+		}
+
+		String getName() {
+			return name;
+		}
+
+		Element getParent() {
+			return parent;
+		}
+
+		void setParent(Element parent) {
+			this.parent = parent;
+		}
+
+		String getType() {
+			return type;
+		}
+
+		void setType(String type) {
+			this.type = type;
+		}
+
+		String getText() {
+			return text;
+		}
+
+		void setText(String text) {
+			this.text = text;
+		}
+
+		@Override
+		public boolean add(Element element) {
+			if (element.getParent() != null) {
+				return false;
+			}
+			if (super.add(element)) {
+				element.setParent(this);
+				String prop = element.getName();
+				if (members.containsKey(prop)) {
+					if (!members.get(prop)) {
+						members.put(prop, Boolean.TRUE);
+					}
+				} else {
+					members.put(prop, Boolean.FALSE);
+				}
+				return true;
+			}
+			return false;
+		}
+
+		JtonElement toJton() throws SerializationException {
+			if (type == null) { // handle NULL
+				JtonObject me = new JtonObject();
+				for (Element e : this) {
+					if (members.get(e.name)) {
+						JtonArray arr = me.get(e.name).getAsJtonArray(null);
+						if (arr == null) {
+							me.add(e.name, arr = new JtonArray());
+						}
+						arr.add(e.toJton());
+					} else {
+						me.add(e.name, e.toJton());
+					}
+				}
+				return me;
+			} else {
+				try {
+					if ("null".equals(type)) {
+						return JtonNull.INSTANCE;
+					} else if ("string".equals(type)) {
+						return new JtonPrimitive(text);
+					} else if ("char".equals(type)) {
+						return new JtonPrimitive(Character.valueOf(text.charAt(0)));
+					} else if ("byte".equals(type)) {
+						return new JtonPrimitive(Byte.valueOf(text));
+					} else if ("short".equals(type)) {
+						return new JtonPrimitive(Short.valueOf(text));
+					} else if ("int".equals(type)) {
+						return new JtonPrimitive(Integer.valueOf(text));
+					} else if ("long".equals(type)) {
+						return new JtonPrimitive(Long.valueOf(text));
+					} else if ("float".equals(type)) {
+						return new JtonPrimitive(Float.valueOf(text));
+					} else if ("double".equals(type)) {
+						return new JtonPrimitive(Double.valueOf(text));
+					} else if ("bigint".equals(type)) {
+						return new JtonPrimitive(new BigInteger(text));
+					} else if ("bigdecimal".equals(type)) {
+						return new JtonPrimitive(new BigDecimal(text));
+					} else if ("date".equals(type)) {
+						return new JtonPrimitive(DatatypeConverter.parseDateTime(text).getTime());
+					} else if ("sqldate".equals(type)) {
+						return new JtonPrimitive(new java.sql.Date(DatatypeConverter.parseDate(text).getTime().getTime()));
+					} else if ("sqltime".equals(type)) {
+						return new JtonPrimitive(new java.sql.Time(DatatypeConverter.parseDate(text).getTime().getTime()));
+					} else if ("sqltstamp".equals(type)) {
+						return new JtonPrimitive(new java.sql.Timestamp(DatatypeConverter.parseDate(text).getTime().getTime()));
+					} else {
+						throw new SerializationException("Unknown type: " + type);
+					}
+				} catch (Exception e) {
+					throw new SerializationException(e.getMessage(), e);
+				}
+			}
+		}
 	}
 
 }
