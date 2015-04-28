@@ -23,6 +23,10 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * A class representing an object type in Json. An object consists of name-value
  * pairs where names are strings, and values are any other type of
@@ -32,6 +36,8 @@ import java.util.Set;
  * @author Inderjeet Singh
  * @author Joel Leitch
  */
+@XmlRootElement (name="item")
+@XmlAccessorType(XmlAccessType.FIELD)
 public final class JtonObject extends JtonElement implements
 		Map<String, JtonElement> {
 	private final LinkedTreeMap<String, JtonElement> members = new LinkedTreeMap<String, JtonElement>();

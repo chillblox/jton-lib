@@ -22,8 +22,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
-import com.arkasoft.jton.internal.Streams;
-import com.arkasoft.jton.stream.JsonWriter;
+import com.arkasoft.jton.serialization.JsonSerializer;
+import com.arkasoft.jton.serialization.SerializationException;
 
 /**
  * A class representing an element of Json. It could either be a
@@ -519,11 +519,12 @@ public abstract class JtonElement {
 	public String toString() {
 		try {
 			StringWriter stringWriter = new StringWriter();
-			JsonWriter jsonWriter = new JsonWriter(stringWriter);
-			jsonWriter.setLenient(true);
-			Streams.write(this, jsonWriter);
+			JsonSerializer s = new JsonSerializer();
+			s.writeObject(this, stringWriter);
 			return stringWriter.toString();
 		} catch (IOException e) {
+			throw new AssertionError(e);
+		} catch (SerializationException e) {
 			throw new AssertionError(e);
 		}
 	}
