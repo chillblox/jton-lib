@@ -1,6 +1,4 @@
 /*
- * Copyright (C) 2008 Google Inc.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,8 +17,10 @@ package com.arkasoft.jton;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * A class representing an array type in Json. An array is a list of {@link JtonElement}s each of
@@ -29,8 +29,9 @@ import java.util.List;
  *
  * @author Inderjeet Singh
  * @author Joel Leitch
+ * @author ggeorg
  */
-public final class JtonArray extends JtonElement implements Iterable<JtonElement> {
+public final class JtonArray extends JtonElement implements List<JtonElement> {
   private final List<JtonElement> elements;
 
   /**
@@ -53,12 +54,13 @@ public final class JtonArray extends JtonElement implements Iterable<JtonElement
    * Adds the specified element to self.
    *
    * @param element the element that needs to be added to the array.
+   * @return 
    */
-  public void add(JtonElement element) {
+  public boolean add(JtonElement element) {
     if (element == null) {
       element = JtonNull.INSTANCE;
     }
-    elements.add(element);
+    return elements.add(element);
   }
 
   /**
@@ -110,7 +112,6 @@ public final class JtonArray extends JtonElement implements Iterable<JtonElement
    * Returns true if this array contains the specified element.
    * @return true if this array contains the specified element.
    * @param element whose presence in this array is to be tested
-   * @since 2.3
    */
   public boolean contains(JtonElement element) {
     return elements.contains(element);
@@ -334,4 +335,91 @@ public final class JtonArray extends JtonElement implements Iterable<JtonElement
   public int hashCode() {
     return elements.hashCode();
   }
+
+	@Override
+	public boolean isEmpty() {
+		return elements.isEmpty();
+	}
+
+	@Override
+	@Deprecated
+	public boolean contains(Object o) {
+		return elements.contains(o);
+	}
+
+	@Override
+	public Object[] toArray() {
+		return elements.toArray();
+	}
+
+	@Override
+	public <T> T[] toArray(T[] a) {
+		return elements.toArray(a);
+	}
+
+	@Override
+	@Deprecated
+	public boolean remove(Object o) {
+		return elements.remove(o);
+	}
+
+	@Override
+	public boolean containsAll(Collection<?> c) {
+		return elements.containsAll(c);
+	}
+
+	@Override
+	public boolean addAll(Collection<? extends JtonElement> c) {
+		return elements.addAll(c);
+	}
+
+	@Override
+	public boolean addAll(int index, Collection<? extends JtonElement> c) {
+		return elements.addAll(index, c);
+	}
+
+	@Override
+	public boolean removeAll(Collection<?> c) {
+		return elements.removeAll(c);
+	}
+
+	@Override
+	public boolean retainAll(Collection<?> c) {
+		return elements.retainAll(c);
+	}
+
+	@Override
+	public void clear() {
+		elements.clear();
+	}
+
+	@Override
+	public void add(int index, JtonElement element) {
+		elements.add(index, element);
+	}
+
+	@Override
+	public int indexOf(Object o) {
+		return elements.indexOf(o);
+	}
+
+	@Override
+	public int lastIndexOf(Object o) {
+		return elements.lastIndexOf(o);
+	}
+
+	@Override
+	public ListIterator<JtonElement> listIterator() {
+		return elements.listIterator();
+	}
+
+	@Override
+	public ListIterator<JtonElement> listIterator(int index) {
+		return elements.listIterator(index);
+	}
+
+	@Override
+	public List<JtonElement> subList(int fromIndex, int toIndex) {
+		return elements.subList(fromIndex, toIndex);
+	}
 }

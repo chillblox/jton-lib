@@ -144,12 +144,12 @@ public final class JtonPrimitive extends JtonElement {
 			this.value = primitive;
 		} else if (primitive instanceof Character) {
 			// convert characters to strings since in JSON, characters are represented
-			// as a single
-			// character string
+			// as a single character string
 			char c = ((Character) primitive).charValue();
 			this.value = String.valueOf(c);
 		} else {
-			$Gson$Preconditions.checkArgument(primitive instanceof Number || primitive instanceof Date
+			$Gson$Preconditions.checkArgument(primitive instanceof Number 
+					|| primitive instanceof Date 
 					|| isPrimitiveOrString(primitive));
 			this.value = primitive;
 		}
