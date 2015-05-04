@@ -13,16 +13,15 @@
  */
 package com.arkasoft.jton;
 
-import com.arkasoft.jton.internal.LinkedTreeMap;
-
 import java.util.Collection;
-import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import com.arkasoft.jton.internal.LinkedTreeMap;
 
 /**
  * A class representing an object type in Json. An object consists of name-value

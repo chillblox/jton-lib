@@ -18,16 +18,19 @@ public class Test {
 	public static void main(String[] args) throws IOException, SerializationException {
 	
 		JtonObject o = new JtonObject();
-		o.add("null", JtonNull.INSTANCE);
-		o.add("lala", 100);
-		o.add("lilo", new BigDecimal("10000000000000000000000.9999999999999999"));
-		o.add("lalala", new BigInteger("10000000000000000000000"));
-		o.add("date", new Date());
-		o.add("sqldate", new java.sql.Date(new Date().getTime()));
-		o.add("sqltime", new java.sql.Time(new Date().getTime()));
-		o.add("sqltstamp", new java.sql.Timestamp(new Date().getTime()));
-		o.add("roger", "Roger Goudarzi");
-		o.add("object", o.deepCopy());
+//		o.add("null", JtonNull.INSTANCE);
+//		o.add("lala", 100);
+//		o.add("lilo", new BigDecimal("10000000000000000000000.9999999999999999"));
+//		o.add("lalala", new BigInteger("10000000000000000000000"));
+//		o.add("date", new Date());
+//		o.add("sqldate", new java.sql.Date(new Date().getTime()));
+//		o.add("sqltime", new java.sql.Time(new Date().getTime()));
+//		o.add("sqltstamp", new java.sql.Timestamp(new Date().getTime()));
+		o.add("roger", "Roger " +'\n'+ " \\ \"lala\" Goudarzi");
+		
+		System.out.println("Roger " +'\n'+ " \\ \"lala\" Goudarzi");
+		
+//		o.add("object", o.deepCopy());
 		
 		JtonArray arr = new JtonArray();
 		arr.add(JtonNull.INSTANCE);
@@ -35,7 +38,7 @@ public class Test {
 		arr.add(new JtonPrimitive("Hello"));
 		arr.add(o.deepCopy());
 		arr.add(o.deepCopy());
-		o.add("array", arr);
+//		o.add("array", arr);
 
 		JsonSerializer s = new JsonSerializer();
 		s.setAlwaysDelimitMapKeys(true);

@@ -324,7 +324,7 @@ public class JsonSerializer implements Serializer<JtonElement> {
 			throws IOException, SerializationException {
 
 		return readString(reader);
-		//return BeanUtils.coerce(string);
+		// return BeanUtils.coerce(string);
 	}
 
 	private Object readNumberValue(Reader reader)
@@ -361,7 +361,7 @@ public class JsonSerializer implements Serializer<JtonElement> {
 		// Get the boolean value
 		return Boolean.parseBoolean(text);
 
-		//return BeanUtils.coerce(value, (Class<?>) typeArgument);
+		// return BeanUtils.coerce(value, (Class<?>) typeArgument);
 	}
 
 	private JtonArray readListValue(Reader reader)
@@ -565,7 +565,8 @@ public class JsonSerializer implements Serializer<JtonElement> {
 
 					case '\\':
 					case '\"':
-					case '\'': {
+					// XXX case '\'':
+					{
 						stringBuilder.append("\\" + ci);
 						break;
 					}
@@ -604,7 +605,7 @@ public class JsonSerializer implements Serializer<JtonElement> {
 				writer.append(number.toString());
 			} else if (o.isBoolean()) {
 				writer.append(String.valueOf(object.getAsBoolean()));
-			}  else if (o.isDate()) {
+			} else if (o.isDate()) {
 				writer.append("\"" + object.getAsString() + "\"");
 			} else if (o.isSqlDate()) {
 				writer.append("\"" + object.getAsString() + "\"");
@@ -686,7 +687,7 @@ public class JsonSerializer implements Serializer<JtonElement> {
 	public String getMIMEType(JtonElement object) {
 		return MIME_TYPE + "; charset=" + charset.name();
 	}
-	
+
 	//
 	// Static helpers
 	//

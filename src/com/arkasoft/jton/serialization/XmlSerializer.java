@@ -75,7 +75,7 @@ public class XmlSerializer implements Serializer<JtonObject> {
 		return element;
 	}
 
-	public JtonObject readObject(Reader reader) 
+	public JtonObject readObject(Reader reader)
 			throws IOException, SerializationException {
 		if (reader == null) {
 			throw new IllegalArgumentException("reader is null.");
@@ -329,12 +329,13 @@ public class XmlSerializer implements Serializer<JtonObject> {
 					break;
 				}
 
-				case '\\':
-				case '\"':
-				case '\'': {
-					stringBuilder.append("\\" + ci);
-					break;
-				}
+				// XXX case '\\':
+				// XXX case '\"':
+				// XXX case '\'':
+				// {
+				// stringBuilder.append("\\" + ci);
+				// break;
+				// }
 
 				default: {
 					if (charset.name().startsWith("UTF")
@@ -475,7 +476,7 @@ public class XmlSerializer implements Serializer<JtonObject> {
 			}
 		}
 	}
-	
+
 	//
 	// Static helpers
 	//
