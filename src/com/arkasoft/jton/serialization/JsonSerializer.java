@@ -322,9 +322,7 @@ public class JsonSerializer implements Serializer<JtonElement> {
 
 	private Object readStringValue(Reader reader)
 			throws IOException, SerializationException {
-
 		return readString(reader);
-		// return BeanUtils.coerce(string);
 	}
 
 	private Object readNumberValue(Reader reader)
