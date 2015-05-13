@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -49,6 +50,26 @@ public final class JtonArray extends JtonElement implements List<JtonElement> {
     }
     return result;
   }
+  
+  public boolean add(Boolean bool) {
+  	return add(new JtonPrimitive(bool));
+  }
+  
+  public boolean add(Number number) {
+  	return add(new JtonPrimitive(number));
+  }
+  
+  public boolean add(String string) {
+  	return add(new JtonPrimitive(string));
+  }
+  
+  public boolean add(Character c) {
+  	return add(new JtonPrimitive(c));
+  }
+  
+  public boolean add(Date date) {
+  	return add(new JtonPrimitive(date));
+  }
 
   /**
    * Adds the specified element to self.
@@ -56,7 +77,8 @@ public final class JtonArray extends JtonElement implements List<JtonElement> {
    * @param element the element that needs to be added to the array.
    * @return 
    */
-  public boolean add(JtonElement element) {
+  @Override
+	public boolean add(JtonElement element) {
     if (element == null) {
       element = JtonNull.INSTANCE;
     }
@@ -80,7 +102,8 @@ public final class JtonArray extends JtonElement implements List<JtonElement> {
    * @return the element previously at the specified position
    * @throws IndexOutOfBoundsException if the specified index is outside the array bounds
    */
-  public JtonElement set(int index, JtonElement element) {
+  @Override
+	public JtonElement set(int index, JtonElement element) {
     return elements.set(index, element);
   }
 
@@ -104,7 +127,8 @@ public final class JtonArray extends JtonElement implements List<JtonElement> {
    * @throws IndexOutOfBoundsException if the specified index is outside the array bounds
    * @since 2.3
    */
-  public JtonElement remove(int index) {
+  @Override
+	public JtonElement remove(int index) {
     return elements.remove(index);
   }
 
@@ -122,7 +146,8 @@ public final class JtonArray extends JtonElement implements List<JtonElement> {
    *
    * @return the number of elements in the array.
    */
-  public int size() {
+  @Override
+	public int size() {
     return elements.size();
   }
 
@@ -132,7 +157,8 @@ public final class JtonArray extends JtonElement implements List<JtonElement> {
    *
    * @return an iterator to navigate the elements of the array.
    */
-  public Iterator<JtonElement> iterator() {
+  @Override
+	public Iterator<JtonElement> iterator() {
     return elements.iterator();
   }
 
@@ -144,7 +170,8 @@ public final class JtonArray extends JtonElement implements List<JtonElement> {
    * @throws IndexOutOfBoundsException if i is negative or greater than or equal to the
    * {@link #size()} of the array.
    */
-  public JtonElement get(int i) {
+  @Override
+	public JtonElement get(int i) {
     return elements.get(i);
   }
 

@@ -21,6 +21,7 @@ package com.arkasoft.jton;
  *
  * @author Inderjeet Singh
  * @author Joel Leitch
+ * @author ggeorg
  */
 public final class JtonSyntaxException extends JtonParseException {
 

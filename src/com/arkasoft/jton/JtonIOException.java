@@ -21,6 +21,7 @@ package com.arkasoft.jton;
  * 
  * @author Inderjeet Singh
  * @author Joel Leitch
+ * @author ggeorg
  */
 public final class JtonIOException extends JtonParseException {
   private static final long serialVersionUID = 1L;

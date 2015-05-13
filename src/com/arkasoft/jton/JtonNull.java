@@ -21,7 +21,7 @@ package com.arkasoft.jton;
  *
  * @author Inderjeet Singh
  * @author Joel Leitch
- * @since 1.2
+ * @author ggeorg
  */
 public final class JtonNull extends JtonElement {
 	

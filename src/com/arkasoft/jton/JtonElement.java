@@ -30,6 +30,7 @@ import com.arkasoft.jton.serialization.SerializationException;
  *
  * @author Inderjeet Singh
  * @author Joel Leitch
+ * @author ggeorg
  */
 public abstract class JtonElement {
 	/**

@@ -28,6 +28,7 @@ package com.arkasoft.jton;
  *
  * @author Inderjeet Singh
  * @author Joel Leitch
+ * @author ggeorg
  */
 public class JtonParseException extends RuntimeException {
   static final long serialVersionUID = -4086729973971783390L;
