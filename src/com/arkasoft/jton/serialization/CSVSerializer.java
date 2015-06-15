@@ -67,7 +67,7 @@ public class CSVSerializer implements Serializer<JtonArray> {
 
 	/**
 	 * Sets the keys that will be read or written by this serializer.
-	 *
+	 * 
 	 * @param keys
 	 */
 	public void setKeys(Collection<String> keys) {
@@ -80,7 +80,7 @@ public class CSVSerializer implements Serializer<JtonArray> {
 
 	/**
 	 * Sets the keys that will be read or written by this serializer.
-	 *
+	 * 
 	 * @param keys
 	 */
 	public void setKeys(String... keys) {
@@ -99,11 +99,11 @@ public class CSVSerializer implements Serializer<JtonArray> {
 
 	/**
 	 * Sets the serializer's write keys flag.
-	 *
+	 * 
 	 * @param writeKeys
-	 *          If <tt>true</tt>, the first line of the output will contain the
-	 *          keys. Otherwise, the first line will contain the first line of
-	 *          data.
+	 *            If <tt>true</tt>, the first line of the output will contain
+	 *            the keys. Otherwise, the first line will contain the first
+	 *            line of data.
 	 */
 	public void setWriteKeys(boolean writeKeys) {
 		this.writeKeys = writeKeys;
@@ -111,10 +111,10 @@ public class CSVSerializer implements Serializer<JtonArray> {
 
 	/**
 	 * Reads values from a comma-separated value stream.
-	 *
+	 * 
 	 * @param inputStream
-	 *          The input stream from which data will be read.
-	 *
+	 *            The input stream from which data will be read.
+	 * 
 	 * @see #readObject(Reader)
 	 */
 	@Override
@@ -129,16 +129,16 @@ public class CSVSerializer implements Serializer<JtonArray> {
 
 	/**
 	 * Reads values from a comma-separated value stream.
-	 *
+	 * 
 	 * @param reader
-	 *          The reader from which data will be read.
-	 *
+	 *            The reader from which data will be read.
+	 * 
 	 * @return A list containing the data read from the CSV file. The list items
 	 *         are instances of Dictionary<String, Object> populated by mapping
 	 *         columns in the CSV file to keys in the key sequence.
 	 *         <p>
-	 *         If no keys have been specified when this method is called, they are
-	 *         assumed to be defined in the first line of the file.
+	 *         If no keys have been specified when this method is called, they
+	 *         are assumed to be defined in the first line of the file.
 	 */
 	public JtonArray readObject(Reader reader) throws IOException, SerializationException {
 		if (reader == null) {
@@ -165,9 +165,9 @@ public class CSVSerializer implements Serializer<JtonArray> {
 
 		// Create the list and notify the listeners
 		JtonArray items = new JtonArray();
-		
-	// Move to the first character
-    c = lineNumberReader.read();
+
+		// Move to the first character
+		c = lineNumberReader.read();
 
 		// Ignore BOM (if present)
 		if (c == 0xFEFF) {
@@ -190,8 +190,7 @@ public class CSVSerializer implements Serializer<JtonArray> {
 				}
 			}
 		} catch (SerializationException exception) {
-			System.err.println("An error occurred while processing input at line number "
-					+ (lineNumberReader.getLineNumber() + 1));
+			System.err.println("An error occurred while processing input at line number " + (lineNumberReader.getLineNumber() + 1));
 
 			throw exception;
 		}
@@ -262,8 +261,7 @@ public class CSVSerializer implements Serializer<JtonArray> {
 					quoted &= (c == '"');
 				}
 
-				if (c != -1
-						&& (quoted || (c != ',' && c != '\r' && c != '\n'))) {
+				if (c != -1 && (quoted || (c != ',' && c != '\r' && c != '\n'))) {
 					valueBuilder.append((char) c);
 					c = reader.read();
 				}
@@ -295,7 +293,8 @@ public class CSVSerializer implements Serializer<JtonArray> {
 				value = string;
 			}
 
-			// Move to the next character after ',' (don't automatically advance to
+			// Move to the next character after ',' (don't automatically advance
+			// to
 			// the next line)
 			if (c == ',') {
 				c = reader.read();
@@ -307,12 +306,12 @@ public class CSVSerializer implements Serializer<JtonArray> {
 
 	/**
 	 * Writes values to a comma-separated value stream.
-	 *
+	 * 
 	 * @param object
-	 *
+	 * 
 	 * @param outputStream
-	 *          The output stream to which data will be written.
-	 *
+	 *            The output stream to which data will be written.
+	 * 
 	 * @see #writeObject(List, Writer)
 	 */
 	@Override
@@ -332,15 +331,15 @@ public class CSVSerializer implements Serializer<JtonArray> {
 
 	/**
 	 * Writes values to a comma-separated value stream.
-	 *
+	 * 
 	 * @param items
-	 *          A list containing the data to write to the CSV file. List items
-	 *          must be instances of Dictionary<String, Object>. The dictionary
-	 *          values will be written out in the order specified by the key
-	 *          sequence.
-	 *
+	 *            A list containing the data to write to the CSV file. List
+	 *            items must be instances of Dictionary<String, Object>. The
+	 *            dictionary values will be written out in the order specified
+	 *            by the key sequence.
+	 * 
 	 * @param writer
-	 *          The writer to which data will be written.
+	 *            The writer to which data will be written.
 	 */
 	private void writeObject(JtonArray items, Writer writer) throws IOException {
 		if (items == null) {
@@ -362,7 +361,7 @@ public class CSVSerializer implements Serializer<JtonArray> {
 
 				writer.append(key);
 			}
-			
+
 			writer.append("\r\n");
 		}
 
@@ -380,10 +379,11 @@ public class CSVSerializer implements Serializer<JtonArray> {
 
 					String string = value.getAsString(null);
 					if (value != null) {
-						if (string.indexOf(',') >= 0
-								|| string.indexOf('"') >= 0
-								|| string.indexOf('\r') >= 0
-								|| string.indexOf('\n') >= 0) {
+						if (string == null) {
+							// empty field for null value
+							string = "";
+						}
+						if (string.indexOf(',') >= 0 || string.indexOf('"') >= 0 || string.indexOf('\r') >= 0 || string.indexOf('\n') >= 0) {
 							writer.append('"');
 
 							if (string.indexOf('"') == -1) {
@@ -414,23 +414,23 @@ public class CSVSerializer implements Serializer<JtonArray> {
 		JtonArray a = new JtonArray();
 		JtonObject o = new JtonObject();
 		a.add(o);
-		
+
 		o.add("date", new Date());
-		
+
 		StringWriter w = new StringWriter();
-		
+
 		CSVSerializer csv = new CSVSerializer();
 		csv.setKeys(o.keySet());
-		//csv.setWriteKeys(true);
-		//csv.writeObject(a, System.out);
-		
+		// csv.setWriteKeys(true);
+		// csv.writeObject(a, System.out);
+
 		csv.writeObject(a, w);
-		
+
 		System.out.println(w.toString());
-		
+
 		JtonArray aa = csv.readObject(new StringReader(w.toString()));
 		System.out.println(aa.get(0).getAsJtonObject().get("date").getAsDate());
-		
+
 	}
 
 }
