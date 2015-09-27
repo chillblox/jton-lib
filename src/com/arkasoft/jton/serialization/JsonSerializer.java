@@ -629,12 +629,14 @@ public class JsonSerializer implements Serializer<JtonElement> {
 			writer.append("]");
 		} else {
 			JtonObject map = object.getAsJtonObject();
-
 			writer.append("{");
 
 			int i = 0;
 			for (String key : map.keySet()) {
 				JtonElement value = map.get(key);
+				if (value.isTransient()) {
+					continue;
+				}
 
 				boolean identifier = true;
 				StringBuilder keyStringBuilder = new StringBuilder();
