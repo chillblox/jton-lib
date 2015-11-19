@@ -251,9 +251,9 @@ public final class JtonObject extends JtonElement implements
 	 *          name of the member being requested.
 	 * @return the JsonPrimitive corresponding to the specified member.
 	 */
-	public JtonPrimitive getAsJtonPrimitive(String memberName) {
-		return (JtonPrimitive) members.get(memberName);
-	}
+//	public JtonPrimitive getAsJtonPrimitive(String memberName) {
+//		return (JtonPrimitive) members.get(memberName);
+//	}
 
 	/**
 	 * Convenience method to get the specified member as a JsonArray.
@@ -262,9 +262,9 @@ public final class JtonObject extends JtonElement implements
 	 *          name of the member being requested.
 	 * @return the JsonArray corresponding to the specified member.
 	 */
-	public JtonArray getAsJtonArray(String memberName) {
-		return (JtonArray) members.get(memberName);
-	}
+//	public JtonArray getAsJtonArray(String memberName) {
+//		return (JtonArray) members.get(memberName);
+//	}
 
 	/**
 	 * Convenience method to get the specified member as a JsonObject.
@@ -273,9 +273,9 @@ public final class JtonObject extends JtonElement implements
 	 *          name of the member being requested.
 	 * @return the JsonObject corresponding to the specified member.
 	 */
-	public JtonObject getAsJtonObject(String memberName) {
-		return (JtonObject) members.get(memberName);
-	}
+//	public JtonObject getAsJtonObject(String memberName) {
+//		return (JtonObject) members.get(memberName);
+//	}
 
 	@Override
 	public boolean equals(Object o) {

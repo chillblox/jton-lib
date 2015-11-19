@@ -1,8 +1,11 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE project>
+
 <project basedir="." default="build-jar" name="jton-lib">
-	<property name="debuglevel" value="source,lines,vars" />
-	<property name="target" value="1.6" />
-	<property name="source" value="1.6" />
+	<property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.6"/>
+    <property name="source" value="1.6"/>
 	
 	<property environment="env" />
 	<property file="build.properties" />

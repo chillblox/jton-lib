@@ -14,8 +14,6 @@
 
 package com.arkasoft.jton;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -183,13 +181,13 @@ public final class JtonArray extends JtonElement implements List<JtonElement> {
    * is not a valid Number.
    * @throws IllegalStateException if the array has more than one element.
    */
-  @Override
-  public Number getAsNumber() {
-    if (elements.size() == 1) {
-      return elements.get(0).getAsNumber();
-    }
-    throw new IllegalStateException();
-  }
+//  @Override
+//  public Number getAsNumber() {
+//    if (elements.size() == 1) {
+//      return elements.get(0).getAsNumber();
+//    }
+//    throw new IllegalStateException();
+//  }
 
   /**
    * convenience method to get this array as a {@link String} if it contains a single element.
@@ -199,13 +197,13 @@ public final class JtonArray extends JtonElement implements List<JtonElement> {
    * is not a valid String.
    * @throws IllegalStateException if the array has more than one element.
    */
-  @Override
-  public String getAsString() {
-    if (elements.size() == 1) {
-      return elements.get(0).getAsString();
-    }
-    throw new IllegalStateException();
-  }
+//  @Override
+//  public String getAsString() {
+//    if (elements.size() == 1) {
+//      return elements.get(0).getAsString();
+//    }
+//    throw new IllegalStateException();
+//  }
 
   /**
    * convenience method to get this array as a double if it contains a single element.
@@ -215,13 +213,13 @@ public final class JtonArray extends JtonElement implements List<JtonElement> {
    * is not a valid double.
    * @throws IllegalStateException if the array has more than one element.
    */
-  @Override
-  public double getAsDouble() {
-    if (elements.size() == 1) {
-      return elements.get(0).getAsDouble();
-    }
-    throw new IllegalStateException();
-  }
+//  @Override
+//  public double getAsDouble() {
+//    if (elements.size() == 1) {
+//      return elements.get(0).getAsDouble();
+//    }
+//    throw new IllegalStateException();
+//  }
 
   /**
    * convenience method to get this array as a {@link BigDecimal} if it contains a single element.
@@ -232,13 +230,13 @@ public final class JtonArray extends JtonElement implements List<JtonElement> {
    * @throws IllegalStateException if the array has more than one element.
    * @since 1.2
    */
-  @Override
-  public BigDecimal getAsBigDecimal() {
-    if (elements.size() == 1) {
-      return elements.get(0).getAsBigDecimal();
-    }
-    throw new IllegalStateException();
-  }
+//  @Override
+//  public BigDecimal getAsBigDecimal() {
+//    if (elements.size() == 1) {
+//      return elements.get(0).getAsBigDecimal();
+//    }
+//    throw new IllegalStateException();
+//  }
 
   /**
    * convenience method to get this array as a {@link BigInteger} if it contains a single element.
@@ -249,13 +247,13 @@ public final class JtonArray extends JtonElement implements List<JtonElement> {
    * @throws IllegalStateException if the array has more than one element.
    * @since 1.2
    */
-  @Override
-  public BigInteger getAsBigInteger() {
-    if (elements.size() == 1) {
-      return elements.get(0).getAsBigInteger();
-    }
-    throw new IllegalStateException();
-  }
+//  @Override
+//  public BigInteger getAsBigInteger() {
+//    if (elements.size() == 1) {
+//      return elements.get(0).getAsBigInteger();
+//    }
+//    throw new IllegalStateException();
+//  }
 
   /**
    * convenience method to get this array as a float if it contains a single element.
@@ -265,13 +263,13 @@ public final class JtonArray extends JtonElement implements List<JtonElement> {
    * is not a valid float.
    * @throws IllegalStateException if the array has more than one element.
    */
-  @Override
-  public float getAsFloat() {
-    if (elements.size() == 1) {
-      return elements.get(0).getAsFloat();
-    }
-    throw new IllegalStateException();
-  }
+//  @Override
+//  public float getAsFloat() {
+//    if (elements.size() == 1) {
+//      return elements.get(0).getAsFloat();
+//    }
+//    throw new IllegalStateException();
+//  }
 
   /**
    * convenience method to get this array as a long if it contains a single element.
@@ -281,13 +279,13 @@ public final class JtonArray extends JtonElement implements List<JtonElement> {
    * is not a valid long.
    * @throws IllegalStateException if the array has more than one element.
    */
-  @Override
-  public long getAsLong() {
-    if (elements.size() == 1) {
-      return elements.get(0).getAsLong();
-    }
-    throw new IllegalStateException();
-  }
+//  @Override
+//  public long getAsLong() {
+//    if (elements.size() == 1) {
+//      return elements.get(0).getAsLong();
+//    }
+//    throw new IllegalStateException();
+//  }
 
   /**
    * convenience method to get this array as an integer if it contains a single element.
@@ -297,29 +295,29 @@ public final class JtonArray extends JtonElement implements List<JtonElement> {
    * is not a valid integer.
    * @throws IllegalStateException if the array has more than one element.
    */
-  @Override
-  public int getAsInt() {
-    if (elements.size() == 1) {
-      return elements.get(0).getAsInt();
-    }
-    throw new IllegalStateException();
-  }
+//  @Override
+//  public int getAsInt() {
+//    if (elements.size() == 1) {
+//      return elements.get(0).getAsInt();
+//    }
+//    throw new IllegalStateException();
+//  }
 
-  @Override
-  public byte getAsByte() {
-    if (elements.size() == 1) {
-      return elements.get(0).getAsByte();
-    }
-    throw new IllegalStateException();
-  }
+//  @Override
+//  public byte getAsByte() {
+//    if (elements.size() == 1) {
+//      return elements.get(0).getAsByte();
+//    }
+//    throw new IllegalStateException();
+//  }
 
-  @Override
-  public char getAsCharacter() {
-    if (elements.size() == 1) {
-      return elements.get(0).getAsCharacter();
-    }
-    throw new IllegalStateException();
-  }
+//  @Override
+//  public char getAsCharacter() {
+//    if (elements.size() == 1) {
+//      return elements.get(0).getAsCharacter();
+//    }
+//    throw new IllegalStateException();
+//  }
 
   /**
    * convenience method to get this array as a primitive short if it contains a single element.
@@ -329,13 +327,13 @@ public final class JtonArray extends JtonElement implements List<JtonElement> {
    * is not a valid short.
    * @throws IllegalStateException if the array has more than one element.
    */
-  @Override
-  public short getAsShort() {
-    if (elements.size() == 1) {
-      return elements.get(0).getAsShort();
-    }
-    throw new IllegalStateException();
-  }
+//  @Override
+//  public short getAsShort() {
+//    if (elements.size() == 1) {
+//      return elements.get(0).getAsShort();
+//    }
+//    throw new IllegalStateException();
+//  }
 
   /**
    * convenience method to get this array as a boolean if it contains a single element.
@@ -345,13 +343,13 @@ public final class JtonArray extends JtonElement implements List<JtonElement> {
    * is not a valid boolean.
    * @throws IllegalStateException if the array has more than one element.
    */
-  @Override
-  public boolean getAsBoolean() {
-    if (elements.size() == 1) {
-      return elements.get(0).getAsBoolean();
-    }
-    throw new IllegalStateException();
-  }
+//  @Override
+//  public boolean getAsBoolean() {
+//    if (elements.size() == 1) {
+//      return elements.get(0).getAsBoolean();
+//    }
+//    throw new IllegalStateException();
+//  }
 
   @Override
   public boolean equals(Object o) {
