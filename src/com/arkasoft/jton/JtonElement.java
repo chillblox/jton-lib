@@ -524,4 +524,17 @@ public abstract class JtonElement {
 			throw new AssertionError(e);
 		}
 	}
+	
+	/**
+	 * Returns a String representation of this element.
+	 */
+	public String toString(int intentFactor) {
+		try {
+			return JsonSerializer.toString(this, true, intentFactor);
+		} catch (JtonIOException e) {
+			throw new AssertionError(e);
+		} catch (SerializationException e) {
+			throw new AssertionError(e);
+		}
+	}
 }

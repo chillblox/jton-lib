@@ -44,17 +44,23 @@ import com.arkasoft.jton.internal.LazilyParsedNumber;
  * writes data to a JavaScript Object Notation (JSON) file.
  */
 public class JsonSerializer implements Serializer<JtonElement> {
-	private Charset charset;
-
-	private boolean alwaysDelimitMapKeys = false;
-
-	private int c = -1;
-
 	public static final String DEFAULT_CHARSET_NAME = "UTF-8";
-
 	public static final String JSON_EXTENSION = "json";
 	public static final String MIME_TYPE = "application/json";
 	public static final int BUFFER_SIZE = 2048;
+
+	// ---------------------------
+
+	/** Character set used to encode/decode the JSON data */
+	private Charset charset;
+
+	/** A flag indicating that map keys should always be quote-delimited. */
+	private boolean alwaysDelimitMapKeys = false;
+
+	/** The number of spaces to add to each level of indentation. */
+	private int indentFactor = 0;
+
+	private int c = -1;
 
 	public JsonSerializer() {
 		this(Charset.forName(DEFAULT_CHARSET_NAME));
@@ -95,6 +101,23 @@ public class JsonSerializer implements Serializer<JtonElement> {
 	}
 
 	/**
+	 * Get the number of spaces to add to each level of indentation.
+	 */
+	public int getIntentFactor() {
+		return indentFactor;
+	}
+
+	/**
+	 * Sets the number of spaces to add to each level of indentation.
+	 * 
+	 * @param intent
+	 *          the number of spaces to add to each level of indentation.
+	 */
+	public void setIntentFactor(int intent) {
+		this.indentFactor = intent;
+	}
+
+	/**
 	 * Reads data from a JSON stream.
 	 *
 	 * @param inputStream
@@ -103,8 +126,7 @@ public class JsonSerializer implements Serializer<JtonElement> {
 	 * @see #readObject(Reader)
 	 */
 	@Override
-	public JtonElement readObject(InputStream inputStream)
-			throws IOException, SerializationException {
+	public JtonElement readObject(InputStream inputStream) throws IOException, SerializationException {
 		if (inputStream == null) {
 			throw new IllegalArgumentException("inputStream is null.");
 		}
@@ -132,8 +154,7 @@ public class JsonSerializer implements Serializer<JtonElement> {
 	 *         <li>A JavaBean object</li>
 	 *         </ul>
 	 */
-	public JtonElement readObject(Reader reader)
-			throws IOException, SerializationException {
+	public JtonElement readObject(Reader reader) throws IOException, SerializationException {
 		if (reader == null) {
 			throw new IllegalArgumentException("reader is null.");
 		}
@@ -152,8 +173,7 @@ public class JsonSerializer implements Serializer<JtonElement> {
 		try {
 			object = readValue(lineNumberReader);
 		} catch (SerializationException exception) {
-			System.err.println("An error occurred while processing input at line number "
-					+ (lineNumberReader.getLineNumber() + 1));
+			System.err.println("An error occurred while processing input at line number " + (lineNumberReader.getLineNumber() + 1));
 
 			throw exception;
 		}
@@ -161,8 +181,7 @@ public class JsonSerializer implements Serializer<JtonElement> {
 		return object;
 	}
 
-	private JtonElement readValue(Reader reader)
-			throws IOException, SerializationException {
+	private JtonElement readValue(Reader reader) throws IOException, SerializationException {
 		JtonElement object = null;
 
 		skipWhitespaceAndComments(reader);
@@ -190,11 +209,8 @@ public class JsonSerializer implements Serializer<JtonElement> {
 		return object;
 	}
 
-	private void skipWhitespaceAndComments(Reader reader)
-			throws IOException, SerializationException {
-		while (c != -1
-				&& (Character.isWhitespace(c)
-				|| c == '/')) {
+	private void skipWhitespaceAndComments(Reader reader) throws IOException, SerializationException {
+		while (c != -1 && (Character.isWhitespace(c) || c == '/')) {
 			boolean comment = (c == '/');
 
 			// Read the next character
@@ -203,17 +219,14 @@ public class JsonSerializer implements Serializer<JtonElement> {
 			if (comment) {
 				if (c == '/') {
 					// Single-line comment
-					while (c != -1
-							&& c != '\n'
-							&& c != '\r') {
+					while (c != -1 && c != '\n' && c != '\r') {
 						c = reader.read();
 					}
 				} else if (c == '*') {
 					// Multi-line comment
 					boolean closed = false;
 
-					while (c != -1
-							&& !closed) {
+					while (c != -1 && !closed) {
 						c = reader.read();
 
 						if (c == '*') {
@@ -236,8 +249,7 @@ public class JsonSerializer implements Serializer<JtonElement> {
 		}
 	}
 
-	private JtonNull readNullValue(Reader reader)
-			throws IOException, SerializationException {
+	private JtonNull readNullValue(Reader reader) throws IOException, SerializationException {
 		String nullString = "null";
 
 		int n = nullString.length();
@@ -259,8 +271,7 @@ public class JsonSerializer implements Serializer<JtonElement> {
 		return JtonNull.INSTANCE;
 	}
 
-	private String readString(Reader reader)
-			throws IOException, SerializationException {
+	private String readString(Reader reader) throws IOException, SerializationException {
 		StringBuilder stringBuilder = new StringBuilder();
 
 		// Use the same delimiter to close the string
@@ -294,11 +305,7 @@ public class JsonSerializer implements Serializer<JtonElement> {
 						String unicode = unicodeBuilder.toString();
 						c = (char) Integer.parseInt(unicode, 16);
 					} else {
-						if (!(c == '\\'
-								|| c == '/'
-								|| c == '\"'
-								|| c == '\''
-								|| c == t)) {
+						if (!(c == '\\' || c == '/' || c == '\"' || c == '\'' || c == t)) {
 							throw new SerializationException("Unsupported escape sequence in input stream.");
 						}
 					}
@@ -320,13 +327,11 @@ public class JsonSerializer implements Serializer<JtonElement> {
 		return stringBuilder.toString();
 	}
 
-	private Object readStringValue(Reader reader)
-			throws IOException, SerializationException {
+	private Object readStringValue(Reader reader) throws IOException, SerializationException {
 		return readString(reader);
 	}
 
-	private Object readNumberValue(Reader reader)
-			throws IOException, SerializationException {
+	private Object readNumberValue(Reader reader) throws IOException, SerializationException {
 		StringBuilder stringBuilder = new StringBuilder();
 
 		while (c != -1 && (Character.isDigit(c) || c == '.' || c == 'e' || c == 'E' || c == '-')) {
@@ -337,8 +342,7 @@ public class JsonSerializer implements Serializer<JtonElement> {
 		return new LazilyParsedNumber(stringBuilder.toString());
 	}
 
-	private Object readBooleanValue(Reader reader)
-			throws IOException, SerializationException {
+	private Object readBooleanValue(Reader reader) throws IOException, SerializationException {
 		String text = (c == 't') ? "true" : "false";
 		int n = text.length();
 		int i = 0;
@@ -362,8 +366,7 @@ public class JsonSerializer implements Serializer<JtonElement> {
 		// return BeanUtils.coerce(value, (Class<?>) typeArgument);
 	}
 
-	private JtonArray readListValue(Reader reader)
-			throws IOException, SerializationException {
+	private JtonArray readListValue(Reader reader) throws IOException, SerializationException {
 		JtonArray sequence = null;
 
 		// Return the default sequence and item types
@@ -395,8 +398,7 @@ public class JsonSerializer implements Serializer<JtonElement> {
 		return sequence;
 	}
 
-	private JtonObject readMapValue(Reader reader)
-			throws IOException, SerializationException {
+	private JtonObject readMapValue(Reader reader) throws IOException, SerializationException {
 		JtonObject dictionary = null;
 		Type valueType = null;
 
@@ -423,8 +425,7 @@ public class JsonSerializer implements Serializer<JtonElement> {
 					throw new SerializationException("Illegal identifier start character.");
 				}
 
-				while (c != -1
-						&& c != ':' && !Character.isWhitespace(c)) {
+				while (c != -1 && c != ':' && !Character.isWhitespace(c)) {
 					if (!Character.isJavaIdentifierPart(c)) {
 						throw new SerializationException("Illegal identifier character.");
 					}
@@ -440,8 +441,7 @@ public class JsonSerializer implements Serializer<JtonElement> {
 				key = keyBuilder.toString();
 			}
 
-			if (key == null
-					|| key.length() == 0) {
+			if (key == null || key.length() == 0) {
 				throw new SerializationException("\"" + key + "\" is not a valid key.");
 			}
 
@@ -504,8 +504,7 @@ public class JsonSerializer implements Serializer<JtonElement> {
 	 * @see #writeObject(Object, Writer)
 	 */
 	@Override
-	public void writeObject(JtonElement object, OutputStream outputStream)
-			throws IOException, SerializationException {
+	public void writeObject(JtonElement object, OutputStream outputStream) throws IOException, SerializationException {
 		if (outputStream == null) {
 			throw new IllegalArgumentException("outputStream is null.");
 		}
@@ -533,8 +532,11 @@ public class JsonSerializer implements Serializer<JtonElement> {
 	 * @param writer
 	 *          The writer to which data will be written.
 	 */
-	public void writeObject(JtonElement object, Writer writer)
-			throws IOException, SerializationException {
+	public void writeObject(JtonElement object, Writer writer) throws IOException, SerializationException {
+		writeObject(object, writer, 0);
+	}
+
+	private void writeObject(JtonElement object, Writer writer, int level) throws IOException, SerializationException {
 		if (writer == null) {
 			throw new IllegalArgumentException("writer is null.");
 		}
@@ -570,8 +572,7 @@ public class JsonSerializer implements Serializer<JtonElement> {
 					}
 
 					default: {
-						if (charset.name().startsWith("UTF")
-								|| ci <= 0xFF) {
+						if (charset.name().startsWith("UTF") || ci <= 0xFF) {
 							stringBuilder.append(ci);
 						} else {
 							stringBuilder.append("\\u");
@@ -583,19 +584,18 @@ public class JsonSerializer implements Serializer<JtonElement> {
 				}
 
 				writer.append("\"" + stringBuilder.toString() + "\"");
+
 			} else if (o.isNumber()) {
 				Number number = object.getAsNumber();
 
 				if (number instanceof Float) {
 					Float f = (Float) number;
-					if (f.isNaN()
-							|| f.isInfinite()) {
+					if (f.isNaN() || f.isInfinite()) {
 						throw new SerializationException(number + " is not a valid value.");
 					}
 				} else if (number instanceof Double) {
 					Double d = (Double) number;
-					if (d.isNaN()
-							|| d.isInfinite()) {
+					if (d.isNaN() || d.isInfinite()) {
 						throw new SerializationException(number + " is not a valid value.");
 					}
 				}
@@ -612,75 +612,166 @@ public class JsonSerializer implements Serializer<JtonElement> {
 			} else if (o.isSqlTimestamp()) {
 				writer.append("\"" + object.getAsString() + "\"");
 			}
+
 		} else if (object.isJtonArray()) {
 			JtonArray list = object.getAsJtonArray();
 			writer.append("[");
 
-			int i = 0;
-			for (JtonElement item : list) {
-				if (i > 0) {
-					writer.append(", ");
+			if (indentFactor > 0) {
+				final String childPadding = padding((level + 1) * indentFactor);
+
+				int i = 0;
+				for (JtonElement item : list) {
+					if (i > 0) {
+						writer.append(',');
+					}
+
+					writer.append('\n');
+					writer.append(childPadding);
+
+					writeObject(item, writer, level + 1);
+					i++;
 				}
 
-				writeObject(item, writer);
-				i++;
+				writer.append('\n');
+				writer.append(padding(level * indentFactor));
+				writer.append("]");
+			} else {
+				int i = 0;
+				for (JtonElement item : list) {
+					if (i > 0) {
+						writer.append(", ");
+					}
+
+					writeObject(item, writer, level++);
+					i++;
+				}
+
+				writer.append("]");
 			}
 
-			writer.append("]");
 		} else {
+
 			JtonObject map = object.getAsJtonObject();
 			writer.append("{");
 
-			int i = 0;
-			for (String key : map.keySet()) {
-				JtonElement value = map.get(key);
-				if (value.isTransient()) {
-					continue;
-				}
+			if (indentFactor > 0) {
+				final String childPadding = padding((level + 1) * indentFactor);
 
-				boolean identifier = true;
-				StringBuilder keyStringBuilder = new StringBuilder();
-
-				for (int j = 0, n = key.length(); j < n; j++) {
-					char cj = key.charAt(j);
-					identifier &= Character.isJavaIdentifierPart(cj);
-
-					if (cj == '"') {
-						keyStringBuilder.append('\\');
+				int i = 0;
+				for (String key : map.keySet()) {
+					JtonElement value = map.get(key);
+					if (value.isTransient()) {
+						continue;
 					}
 
-					keyStringBuilder.append(cj);
+					boolean identifier = true;
+					StringBuilder keyStringBuilder = new StringBuilder();
+
+					for (int j = 0, n = key.length(); j < n; j++) {
+						char cj = key.charAt(j);
+						identifier &= Character.isJavaIdentifierPart(cj);
+
+						if (cj == '"') {
+							keyStringBuilder.append('\\');
+						}
+
+						keyStringBuilder.append(cj);
+					}
+
+					key = keyStringBuilder.toString();
+
+					if (i > 0) {
+						writer.append(", ");
+					}
+
+					writer.append('\n');
+					writer.append(childPadding);
+
+					// Write the key
+					if (!identifier || alwaysDelimitMapKeys) {
+						writer.append('"');
+					}
+
+					writer.append(key);
+
+					if (!identifier || alwaysDelimitMapKeys) {
+						writer.append('"');
+					}
+
+					writer.append(": ");
+
+					// Write the value
+					writeObject(value, writer, level + 1);
+
+					i++;
 				}
 
-				key = keyStringBuilder.toString();
+				writer.append('\n');
+				writer.append(padding(level * indentFactor));
+				writer.append("}");
 
-				if (i > 0) {
-					writer.append(", ");
+			} else {
+
+				int i = 0;
+				for (String key : map.keySet()) {
+					JtonElement value = map.get(key);
+					if (value.isTransient()) {
+						continue;
+					}
+
+					boolean identifier = true;
+					StringBuilder keyStringBuilder = new StringBuilder();
+
+					for (int j = 0, n = key.length(); j < n; j++) {
+						char cj = key.charAt(j);
+						identifier &= Character.isJavaIdentifierPart(cj);
+
+						if (cj == '"') {
+							keyStringBuilder.append('\\');
+						}
+
+						keyStringBuilder.append(cj);
+					}
+
+					key = keyStringBuilder.toString();
+
+					if (i > 0) {
+						writer.append(", ");
+					}
+
+					// Write the key
+					if (!identifier || alwaysDelimitMapKeys) {
+						writer.append('"');
+					}
+
+					writer.append(key);
+
+					if (!identifier || alwaysDelimitMapKeys) {
+						writer.append('"');
+					}
+
+					writer.append(": ");
+
+					// Write the value
+					writeObject(value, writer, level++);
+
+					i++;
 				}
 
-				// Write the key
-				if (!identifier || alwaysDelimitMapKeys) {
-					writer.append('"');
-				}
-
-				writer.append(key);
-
-				if (!identifier || alwaysDelimitMapKeys) {
-					writer.append('"');
-				}
-
-				writer.append(": ");
-
-				// Write the value
-				writeObject(value, writer);
-
-				i++;
+				writer.append("}");
 			}
-
-			writer.append("}");
 		}
 
 		writer.flush();
+	}
+
+	private String padding(int padding) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < padding; i++) {
+			sb.append(' ');
+		}
+		return sb.toString();
 	}
 
 	@Override
@@ -725,6 +816,35 @@ public class JsonSerializer implements Serializer<JtonElement> {
 	public static String toString(JtonElement value, boolean alwaysDelimitMapKeys) throws SerializationException {
 		JsonSerializer jsonSerializer = new JsonSerializer();
 		jsonSerializer.setAlwaysDelimitMapKeys(alwaysDelimitMapKeys);
+
+		StringWriter writer = new StringWriter();
+
+		try {
+			jsonSerializer.writeObject(value, writer);
+		} catch (IOException exception) {
+			throw new JtonIOException(exception);
+		}
+
+		return writer.toString();
+	}
+
+	/**
+	 * Converts a object to a JSON string representation.
+	 * 
+	 * @param value
+	 *          The object to convert.
+	 * @param alwaysDelimitMapKeys
+	 *          A flag indicating whether or not map keys will always be
+	 *          quote-delimited.
+	 * @param intentFactor
+	 *          The number of spaces to add to each level of indentation.
+	 * @return The resulting JSON string.
+	 * @throws SerializationException
+	 */
+	public static String toString(JtonElement value, boolean alwaysDelimitMapKeys, int intentFactor) throws SerializationException {
+		JsonSerializer jsonSerializer = new JsonSerializer();
+		jsonSerializer.setAlwaysDelimitMapKeys(alwaysDelimitMapKeys);
+		jsonSerializer.setIntentFactor(intentFactor);
 
 		StringWriter writer = new StringWriter();
 
