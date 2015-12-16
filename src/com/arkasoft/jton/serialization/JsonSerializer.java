@@ -633,9 +633,13 @@ public class JsonSerializer implements Serializer<JtonElement> {
 					i++;
 				}
 
-				writer.append('\n');
-				writer.append(padding(level * indentFactor));
+				if(list.size() > 0) {
+					writer.append('\n');
+					writer.append(padding(level * indentFactor));
+				}
+				
 				writer.append("]");
+				
 			} else {
 				int i = 0;
 				for (JtonElement item : list) {
@@ -707,8 +711,11 @@ public class JsonSerializer implements Serializer<JtonElement> {
 					i++;
 				}
 
-				writer.append('\n');
-				writer.append(padding(level * indentFactor));
+				if(map.size() > 0) {
+					writer.append('\n');
+					writer.append(padding(level * indentFactor));
+				}
+				
 				writer.append("}");
 
 			} else {
