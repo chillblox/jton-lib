@@ -14,12 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.arkasoft.jton.serialization;
+package com.veracloud.jton.serialization;
 
 /**
  * Thrown when an error is encountered during serialization.
- * 
- * @author ggeorg
  */
 public class SerializationException extends Exception {
 	private static final long serialVersionUID = -2898671957574834817L;

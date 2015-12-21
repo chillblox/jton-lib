@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.arkasoft.jton.serialization;
+package com.veracloud.jton.serialization;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -31,13 +31,13 @@ import java.io.Writer;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 
-import com.arkasoft.jton.JtonArray;
-import com.arkasoft.jton.JtonElement;
-import com.arkasoft.jton.JtonIOException;
-import com.arkasoft.jton.JtonNull;
-import com.arkasoft.jton.JtonObject;
-import com.arkasoft.jton.JtonPrimitive;
-import com.arkasoft.jton.internal.LazilyParsedNumber;
+import com.veracloud.jton.JtonArray;
+import com.veracloud.jton.JtonElement;
+import com.veracloud.jton.JtonIOException;
+import com.veracloud.jton.JtonNull;
+import com.veracloud.jton.JtonObject;
+import com.veracloud.jton.JtonPrimitive;
+import com.veracloud.jton.internal.LazilyParsedNumber;
 
 /**
  * Implementation of the {@link Serializer} interface that reads data from and

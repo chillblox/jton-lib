@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.arkasoft.jton;
+package com.veracloud.jton;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.arkasoft.jton.beans.BeanAdapter;
-import com.arkasoft.jton.beans.PropertyNotFoundException;
+import com.veracloud.jton.beans.BeanAdapter;
+import com.veracloud.jton.beans.PropertyNotFoundException;
 
 /**
  * Contains utility methods for working with JTON or JTON-like data structures.
@@ -32,8 +32,6 @@ import com.arkasoft.jton.beans.PropertyNotFoundException;
  * <p>
  * If, however, the object at a given level is a {@link List} then the key is
  * assumed to be an integer index into the list.
- * 
- * @author ggeorg
  */
 public class JtonOGNL {
 

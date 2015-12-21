@@ -1,6 +1,4 @@
 /*
- * Copyright (C) 2010 Google Inc.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,15 +11,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.arkasoft.jton;
+package com.veracloud.jton;
 
 /**
- * This exception is raised when Gson attempts to read (or write) a malformed
+ * This exception is raised when Jton attempts to read (or write) a malformed
  * JSON element.
- *
- * @author Inderjeet Singh
- * @author Joel Leitch
- * @author ggeorg
  */
 public final class JtonSyntaxException extends JtonParseException {
 

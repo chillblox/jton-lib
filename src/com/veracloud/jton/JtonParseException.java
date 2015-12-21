@@ -1,6 +1,4 @@
 /*
- * Copyright (C) 2008 Google Inc.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,8 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.arkasoft.jton;
+package com.veracloud.jton;
 
 /**
  * This exception is raised if there is a serious issue that occurs during parsing of a Json
@@ -25,10 +22,6 @@ package com.arkasoft.jton;
  * {@link RuntimeException} avoids bad coding practices on the client side where they catch the
  * exception and do nothing.  It is often the case that you want to blow up if there is a parsing
  * error (i.e. often clients do not know how to recover from a {@link JtonParseException}.</p>
- *
- * @author Inderjeet Singh
- * @author Joel Leitch
- * @author ggeorg
  */
 public class JtonParseException extends RuntimeException {
   static final long serialVersionUID = -4086729973971783390L;

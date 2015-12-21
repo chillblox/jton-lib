@@ -11,8 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.arkasoft.jton;
+package com.veracloud.jton;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,10 +24,6 @@ import java.util.ListIterator;
  * A class representing an array type in Json. An array is a list of {@link JtonElement}s each of
  * which can be of a different type. This is an ordered list, meaning that the order in which
  * elements are added is preserved.
- *
- * @author Inderjeet Singh
- * @author Joel Leitch
- * @author ggeorg
  */
 public final class JtonArray extends JtonElement implements List<JtonElement> {
   private final List<JtonElement> elements;

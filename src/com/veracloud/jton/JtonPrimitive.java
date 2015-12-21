@@ -1,6 +1,4 @@
 /*
- * Copyright (C) 2008 Google Inc.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,8 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.arkasoft.jton;
+package com.veracloud.jton;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -23,16 +20,12 @@ import java.util.Date;
 
 import javax.xml.bind.DatatypeConverter;
 
-import com.arkasoft.jton.internal.$Gson$Preconditions;
-import com.arkasoft.jton.internal.LazilyParsedNumber;
+import com.veracloud.jton.internal.$Gson$Preconditions;
+import com.veracloud.jton.internal.LazilyParsedNumber;
 
 /**
  * A class representing a Json primitive value. A primitive value is either a
  * String, a Java primitive, or a Java primitive wrapper type.
- *
- * @author Inderjeet Singh
- * @author Joel Leitch
- * @author ggeorg
  */
 public final class JtonPrimitive extends JtonElement {
 

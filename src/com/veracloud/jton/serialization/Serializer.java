@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.arkasoft.jton.serialization;
+package com.veracloud.jton.serialization;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,8 +23,6 @@ import java.io.OutputStream;
 /**
  * Defines an interface for writing objects to and reading objects from a data
  * stream.
- *
- * @author ggeorg
  *
  * @param <T>
  *          The type of data being read and written.

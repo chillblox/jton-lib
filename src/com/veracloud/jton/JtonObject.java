@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.arkasoft.jton;
+package com.veracloud.jton;
 
 import java.util.Collection;
 import java.util.Map;
@@ -21,17 +21,13 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.arkasoft.jton.internal.LinkedTreeMap;
+import com.veracloud.jton.internal.LinkedTreeMap;
 
 /**
  * A class representing an object type in Json. An object consists of name-value
  * pairs where names are strings, and values are any other type of
  * {@link JtonElement}. This allows for a creating a tree of JsonElements. The
  * member elements of this object are maintained in order they were added.
- *
- * @author Inderjeet Singh
- * @author Joel Leitch
- * @author ggeorg
  */
 @XmlRootElement(name = "item")
 @XmlAccessorType(XmlAccessType.FIELD)

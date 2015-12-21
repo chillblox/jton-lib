@@ -1,6 +1,4 @@
 /*
- * Copyright (C) 2011 Google Inc.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,15 +11,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.arkasoft.jton.internal;
+package com.veracloud.jton.internal;
 
 import java.io.ObjectStreamException;
 import java.math.BigDecimal;
 
 /**
  * This class holds a number value that is lazily converted to a specific number type
- *
- * @author Inderjeet Singh
  */
 public final class LazilyParsedNumber extends Number {
   private final String value;

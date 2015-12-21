@@ -1,6 +1,4 @@
 /**
- * Copyright (C) 2008 Google Inc.
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,11 +11,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.veracloud.jton.internal;
 
-package com.arkasoft.jton.internal;
-
-import static com.arkasoft.jton.internal.$Gson$Preconditions.checkArgument;
-import static com.arkasoft.jton.internal.$Gson$Preconditions.checkNotNull;
+import static com.veracloud.jton.internal.$Gson$Preconditions.checkArgument;
+import static com.veracloud.jton.internal.$Gson$Preconditions.checkNotNull;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
@@ -36,9 +33,6 @@ import java.util.Properties;
 
 /**
  * Static methods for working with types.
- *
- * @author Bob Lee
- * @author Jesse Wilson
  */
 public final class $Gson$Types {
   static final Type[] EMPTY_TYPE_ARRAY = new Type[] {};
