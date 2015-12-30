@@ -45,6 +45,7 @@ import com.veracloud.jton.JtonIOException;
 import com.veracloud.jton.JtonNull;
 import com.veracloud.jton.JtonObject;
 import com.veracloud.jton.JtonPrimitive;
+import com.veracloud.jton.internal.LazilyParsedNumber;
 
 public class XmlSerializer implements Serializer<JtonObject> {
 	private Charset charset = null;
@@ -250,6 +251,8 @@ public class XmlSerializer implements Serializer<JtonObject> {
 						type = "int";
 					} else if (value instanceof BigInteger) {
 						type = "bigint";
+					} else if (value instanceof com.veracloud.jton.internal.LazilyParsedNumber) {
+						type = "number";
 					} else if (value instanceof java.sql.Date) {
 						type = "sqldate";
 					} else if (value instanceof java.sql.Time) {
@@ -472,6 +475,8 @@ public class XmlSerializer implements Serializer<JtonObject> {
 						return new JtonPrimitive(new BigInteger(text));
 					} else if ("bigdecimal".equals(type)) {
 						return new JtonPrimitive(new BigDecimal(text));
+					} else if ("number".equals(type)) {
+						return new JtonPrimitive(new LazilyParsedNumber(text));
 					} else if ("date".equals(type)) {
 						return new JtonPrimitive(DatatypeConverter.parseDateTime(text).getTime());
 					} else if ("sqldate".equals(type)) {
