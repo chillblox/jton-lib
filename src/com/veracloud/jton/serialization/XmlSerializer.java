@@ -244,7 +244,7 @@ public class XmlSerializer implements Serializer<JtonObject> {
 					xmlStreamWriter.writeStartElement(key);
 					String type;
 
-					Object value = element.getValue();
+					Object value = element.getPrimitiveValue();
 					if (value instanceof Boolean) {
 						type = "bool";
 					} else if (value instanceof Integer) {
@@ -294,7 +294,7 @@ public class XmlSerializer implements Serializer<JtonObject> {
 					xmlStreamWriter.writeStartElement(key);
 					String type;
 
-					Object value = element.getValue();
+					Object value = element.getPrimitiveValue();
 					if (value instanceof Boolean) {
 						type = "bool";
 					} else if (value instanceof Integer) {

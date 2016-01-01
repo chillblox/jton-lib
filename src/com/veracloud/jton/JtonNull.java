@@ -14,14 +14,12 @@
 package com.veracloud.jton;
 
 /**
- * A class representing a Json {@code null} value.
+ * A class representing a Jton {@code null} value.
  */
 public final class JtonNull extends JtonElement {
 	
   /**
    * singleton for JsonNull
-   *
-   * @since 1.8
    */
   public static final JtonNull INSTANCE = new JtonNull();
 
@@ -45,4 +43,5 @@ public final class JtonNull extends JtonElement {
   public boolean equals(Object other) {
     return this == other || other instanceof JtonNull;
   }
+
 }

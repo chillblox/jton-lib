@@ -29,368 +29,405 @@ import com.veracloud.jton.internal.LazilyParsedNumber;
  */
 public final class JtonPrimitive extends JtonElement {
 
-	private static final Class<?>[] PRIMITIVE_TYPES = {
-			int.class, long.class, short.class, float.class, double.class, byte.class, boolean.class, char.class,
-			Integer.class, Long.class, Short.class, Float.class, Double.class, Byte.class, Boolean.class, Character.class
-	};
+  /**
+   * Primitive types.
+   */
+  private static final Class<?>[] PRIMITIVE_TYPES = {
+      Integer.class, int.class,
+      Long.class, long.class,
+      Short.class, short.class,
+      Float.class, float.class,
+      Double.class, double.class,
+      Byte.class, byte.class,
+      Boolean.class, boolean.class,
+      Character.class, char.class
+  };
 
-	private boolean jtonTransient = false;
+  // ---
 
-	private Object value;
+  /**
+   * Primitive value.
+   */
+  private Object value;
 
-	/**
-	 * Create a primitive using the specified Object. It must be an instance of
-	 * {@link Number}, a {@link Date}, a Java primitive type, or a String.
-	 *
-	 * @param primitive
-	 *          the value to create the primitive with.
-	 */
-	public JtonPrimitive(Object primitive) {
-		setValue(primitive);
-	}
+  /**
+   * Flag indicating that the primitive value ßtransient.
+   */
+  private boolean jtonTransient = false;
 
-	/**
-	 * Create a primitive using the specified Object. It must be an instance of
-	 * {@link Number}, a {@link Date}, a Java primitive type, or a String;
-	 * otherwise {@code jtonTransient} parameter must be set to {@code true}.
-	 * 
-	 * @param primitive
-	 *          the value to create the primitive with.
-	 * @param jtonTransient
-	 *          whether this primitive value is transient or not.
-	 */
-	JtonPrimitive(Object primitive, boolean jtonTransient) {
-		this.jtonTransient = jtonTransient;
-		setValue(primitive);
-	}
+  /**
+   * Create a primitive using the specified Object. It must be an instance of
+   * {@link Number}, a {@link Date}, a Java primitive type, or a String.
+   *
+   * @param primitive
+   *          the value to create the primitive with.
+   */
+  public JtonPrimitive(Object primitive) {
+    setPrimitiveValue(primitive);
+  }
 
-	@Override
-	public JtonPrimitive deepCopy() {
-		if (!isTransient()) {
-			return new JtonPrimitive(value);
-		}
-		return this;
-	}
+  /**
+   * Create a primitive using the specified Object. It must be an instance of
+   * {@link Number}, a {@link Date}, a Java primitive type, or a String;
+   * otherwise {@code jtonTransient} parameter must be set to {@code true}.
+   * 
+   * @param primitive
+   *          the value to create the primitive with.
+   * @param jtonTransient
+   *          whether this primitive value is transient or not.
+   */
+  JtonPrimitive(Object primitive, boolean jtonTransient) {
+    this.jtonTransient = jtonTransient;
+    setPrimitiveValue(primitive);
+  }
 
-	@Override
-	public boolean isTransient() {
-		return jtonTransient;
-	}
+  @Override
+  public JtonPrimitive deepCopy() {
+    if (!isTransient()) {
+      return new JtonPrimitive(value);
+    }
+    return this;
+  }
 
-	@Override
-	public Object getValue() {
-		return value;
-	}
+  @Override
+  public boolean isTransient() {
+    return jtonTransient;
+  }
 
-	void setValue(Object primitive) {
-		if (isTransient()) {
-			this.value = primitive;
-		} else if (primitive instanceof Character) {
-			// convert characters to strings since in JSON, characters are represented
-			// as a single character string
-			char c = ((Character) primitive).charValue();
-			this.value = String.valueOf(c);
-		} else {
-			$Gson$Preconditions.checkArgument(primitive instanceof Number 
-					|| primitive instanceof Date 
-					|| isPrimitiveOrString(primitive));
-			this.value = primitive;
-		}
-	}
+  @Override
+  public Object getPrimitiveValue() {
+    return value;
+  }
 
-	/**
-	 * Check whether this primitive contains a boolean value.
-	 *
-	 * @return true if this primitive contains a boolean value, false otherwise.
-	 */
-	public boolean isBoolean() {
-		return value instanceof Boolean;
-	}
+  final void setPrimitiveValue(Object primitive) {
+    if (isTransient()) {
+      this.value = primitive;
+    } else if (primitive instanceof Character) {
+      // convert characters to strings since in JSON, characters are represented
+      // as a single character string
+      char c = ((Character) primitive).charValue();
+      this.value = String.valueOf(c);
+    } else {
+      $Gson$Preconditions.checkArgument(isPrimitiveOrStringOrNumberOrDate(primitive));
+      this.value = primitive;
+    }
+  }
 
-	/**
-	 * convenience method to get this element as a {@link Boolean}.
-	 *
-	 * @return get this element as a {@link Boolean}.
-	 */
-	@Override
-	Boolean getAsBooleanWrapper() {
-		return (Boolean) value;
-	}
+  /**
+   * Check whether this primitive contains a boolean value.
+   *
+   * @return true if this primitive contains a boolean value, false otherwise.
+   */
+  public boolean isBoolean() {
+    return value instanceof Boolean;
+  }
 
-	/**
-	 * convenience method to get this element as a boolean value.
-	 *
-	 * @return get this element as a primitive boolean value.
-	 */
-	@Override
-	public boolean getAsBoolean() {
-		if (isBoolean()) {
-			return getAsBooleanWrapper().booleanValue();
-		} else {
-			// Check to see if the value as a String is "true" in any case.
-			return Boolean.parseBoolean(getAsString());
-		}
-	}
+  /**
+   * convenience method to get this element as a boolean value.
+   *
+   * @return get this element as a primitive boolean value.
+   */
+  @Override
+  public boolean getAsBoolean() {
+    if (isBoolean()) {
+      return (Boolean) value;
+    } else {
+      // Check to see if the value as a String is "true" in any case.
+      return Boolean.parseBoolean(getAsString());
+    }
+  }
 
-	/**
-	 * Check whether this primitive contains a Number.
-	 *
-	 * @return true if this primitive contains a Number, false otherwise.
-	 */
-	public boolean isNumber() {
-		return value instanceof Number;
-	}
+  /**
+   * Check whether this primitive contains a Number.
+   *
+   * @return true if this primitive contains a Number, false otherwise.
+   */
+  public boolean isNumber() {
+    return value instanceof Number;
+  }
 
-	/**
-	 * convenience method to get this element as a Number.
-	 *
-	 * @return get this element as a Number.
-	 * @throws NumberFormatException
-	 *           if the value contained is not a valid Number.
-	 */
-	@Override
-	public Number getAsNumber() {
-		return value instanceof String ? new LazilyParsedNumber((String) value) : (Number) value;
-	}
+  /**
+   * convenience method to get this element as a Number.
+   *
+   * @return get this element as a Number.
+   * @throws NumberFormatException
+   *           if the value contained is not a valid Number.
+   */
+  @Override
+  public Number getAsNumber() {
+    return value instanceof String ? new LazilyParsedNumber((String) value) : (Number) value;
+  }
 
-	/**
-	 * Check whether this primitive contains a String value.
-	 *
-	 * @return true if this primitive contains a String value, false otherwise.
-	 */
-	public boolean isString() {
-		return value instanceof String;
-	}
+  /**
+   * Check whether this primitive contains a String value.
+   *
+   * @return true if this primitive contains a String value, false otherwise.
+   */
+  public boolean isString() {
+    return value instanceof String;
+  }
 
-	/**
-	 * convenience method to get this element as a String.
-	 *
-	 * @return get this element as a String.
-	 */
-	@Override
-	public String getAsString() {
-		if (isNumber()) {
-			return getAsNumber().toString();
-		} else if (isBoolean()) {
-			return getAsBooleanWrapper().toString();
-		} else if (isDate()) {
-			Date d = getAsDate();
-			Calendar c = Calendar.getInstance();
-			c.setTime(d);
-			if (d instanceof java.sql.Date) {
-				return DatatypeConverter.printDate(c);
-			} else if (d instanceof java.sql.Time) {
-				return DatatypeConverter.printTime(c);
-			} else {
-				return DatatypeConverter.printDateTime(c);
-			}
-		} else {
-			return (String) value;
-		}
-	}
+  /**
+   * convenience method to get this element as a String.
+   *
+   * @return get this element as a String.
+   */
+  @Override
+  public String getAsString() {
+    if (isNumber()) {
+      return getAsNumber().toString();
+    } else if (isBoolean()) {
+      return String.valueOf(getAsBoolean());
+    } else if (isDate()) {
+      Date d = getAsDate();
+      Calendar c = Calendar.getInstance();
+      c.setTime(d);
+      if (d instanceof java.sql.Date) {
+        return DatatypeConverter.printDate(c);
+      } else if (d instanceof java.sql.Time) {
+        return DatatypeConverter.printTime(c);
+      } else {
+        return DatatypeConverter.printDateTime(c);
+      }
+    } else {
+      return (String) value;
+    }
+  }
 
-	/**
-	 * convenience method to get this element as a primitive double.
-	 *
-	 * @return get this element as a primitive double.
-	 * @throws NumberFormatException
-	 *           if the value contained is not a valid double.
-	 */
-	@Override
-	public double getAsDouble() {
-		return isNumber() ? getAsNumber().doubleValue() : Double.parseDouble(getAsString());
-	}
+  /**
+   * convenience method to get this element as a primitive double.
+   *
+   * @return get this element as a primitive double.
+   * @throws NumberFormatException
+   *           if the value contained is not a valid double.
+   */
+  @Override
+  public double getAsDouble() {
+    return isNumber() ? getAsNumber().doubleValue() : Double.parseDouble(getAsString());
+  }
 
-	/**
-	 * convenience method to get this element as a {@link BigDecimal}.
-	 *
-	 * @return get this element as a {@link BigDecimal}.
-	 * @throws NumberFormatException
-	 *           if the value contained is not a valid {@link BigDecimal}.
-	 */
-	@Override
-	public BigDecimal getAsBigDecimal() {
-		return value instanceof BigDecimal ? (BigDecimal) value : new BigDecimal(value.toString());
-	}
+  /**
+   * convenience method to get this element as a {@link BigDecimal}.
+   *
+   * @return get this element as a {@link BigDecimal}.
+   * @throws NumberFormatException
+   *           if the value contained is not a valid {@link BigDecimal}.
+   */
+  @Override
+  public BigDecimal getAsBigDecimal() {
+    return value instanceof BigDecimal ? (BigDecimal) value : new BigDecimal(value.toString());
+  }
 
-	/**
-	 * convenience method to get this element as a {@link BigInteger}.
-	 *
-	 * @return get this element as a {@link BigInteger}.
-	 * @throws NumberFormatException
-	 *           if the value contained is not a valid {@link BigInteger}.
-	 */
-	@Override
-	public BigInteger getAsBigInteger() {
-		return value instanceof BigInteger ?
-				(BigInteger) value : new BigInteger(value.toString());
-	}
+  /**
+   * convenience method to get this element as a {@link BigInteger}.
+   *
+   * @return get this element as a {@link BigInteger}.
+   * @throws NumberFormatException
+   *           if the value contained is not a valid {@link BigInteger}.
+   */
+  @Override
+  public BigInteger getAsBigInteger() {
+    return value instanceof BigInteger ? (BigInteger) value : new BigInteger(value.toString());
+  }
 
-	/**
-	 * convenience method to get this element as a float.
-	 *
-	 * @return get this element as a float.
-	 * @throws NumberFormatException
-	 *           if the value contained is not a valid float.
-	 */
-	@Override
-	public float getAsFloat() {
-		return isNumber() ? getAsNumber().floatValue() : Float.parseFloat(getAsString());
-	}
+  /**
+   * convenience method to get this element as a float.
+   *
+   * @return get this element as a float.
+   * @throws NumberFormatException
+   *           if the value contained is not a valid float.
+   */
+  @Override
+  public float getAsFloat() {
+    return isNumber() ? getAsNumber().floatValue() : Float.parseFloat(getAsString());
+  }
 
-	/**
-	 * convenience method to get this element as a primitive long.
-	 *
-	 * @return get this element as a primitive long.
-	 * @throws NumberFormatException
-	 *           if the value contained is not a valid long.
-	 */
-	@Override
-	public long getAsLong() {
-		return isNumber() ? getAsNumber().longValue() : Long.parseLong(getAsString());
-	}
+  /**
+   * convenience method to get this element as a primitive long.
+   *
+   * @return get this element as a primitive long.
+   * @throws NumberFormatException
+   *           if the value contained is not a valid long.
+   */
+  @Override
+  public long getAsLong() {
+    return isNumber() ? getAsNumber().longValue() : Long.parseLong(getAsString());
+  }
 
-	/**
-	 * convenience method to get this element as a primitive short.
-	 *
-	 * @return get this element as a primitive short.
-	 * @throws NumberFormatException
-	 *           if the value contained is not a valid short value.
-	 */
-	@Override
-	public short getAsShort() {
-		return isNumber() ? getAsNumber().shortValue() : Short.parseShort(getAsString());
-	}
+  /**
+   * convenience method to get this element as a primitive short.
+   *
+   * @return get this element as a primitive short.
+   * @throws NumberFormatException
+   *           if the value contained is not a valid short value.
+   */
+  @Override
+  public short getAsShort() {
+    return isNumber() ? getAsNumber().shortValue() : Short.parseShort(getAsString());
+  }
 
-	/**
-	 * convenience method to get this element as a primitive integer.
-	 *
-	 * @return get this element as a primitive integer.
-	 * @throws NumberFormatException
-	 *           if the value contained is not a valid integer.
-	 */
-	@Override
-	public int getAsInt() {
-		return isNumber() ? getAsNumber().intValue() : Integer.parseInt(getAsString());
-	}
+  /**
+   * convenience method to get this element as a primitive integer.
+   *
+   * @return get this element as a primitive integer.
+   * @throws NumberFormatException
+   *           if the value contained is not a valid integer.
+   */
+  @Override
+  public int getAsInt() {
+    return isNumber() ? getAsNumber().intValue() : Integer.parseInt(getAsString());
+  }
 
-	@Override
-	public byte getAsByte() {
-		return isNumber() ? getAsNumber().byteValue() : Byte.parseByte(getAsString());
-	}
+  /**
+   * convenience method to get this element as a primitive byte.
+   *
+   * @return get this element as a primitive byte.
+   * @throws NumberFormatException
+   *           if the value contained is not a valid integer.
+   */
+  @Override
+  public byte getAsByte() {
+    return isNumber() ? getAsNumber().byteValue() : Byte.parseByte(getAsString());
+  }
 
-	@Override
-	public char getAsCharacter() {
-		return getAsString().charAt(0);
-	}
+  /**
+   * convenience method to get this element as a primitive char.
+   *
+   * @return get this element as a primitive char.
+   */
+  @Override
+  public char getAsCharacter() {
+    return getAsString().charAt(0);
+  }
 
-	public boolean isDate() {
-		return value instanceof Date;
-	}
+  /**
+   * Check whether this primitive contains a Date value.
+   *
+   * @return true if this primitive contains a Date value, false otherwise.
+   */
+  public boolean isDate() {
+    return value instanceof Date;
+  }
 
-	public boolean isSqlDate() {
-		return value instanceof java.sql.Date;
-	}
+  /**
+   * 
+   * @throws IllegalArgumentException
+   */
+  @Override
+  public Date getAsDate() {
+    return isDate() ? (Date) value : DatatypeConverter.parseDateTime(getAsString()).getTime();
+  }
 
-	public boolean isSqlTime() {
-		return value instanceof java.sql.Time;
-	}
+  /**
+   * Check whether this primitive contains a SQL Date value.
+   *
+   * @return true if this primitive contains a SQL Date value, false otherwise.
+   */
+  public boolean isSqlDate() {
+    return value instanceof java.sql.Date;
+  }
 
-	public boolean isSqlTimestamp() {
-		return value instanceof java.sql.Timestamp;
-	}
+  @Override
+  public java.sql.Date getAsSqlDate() {
+    return isSqlDate() ? (java.sql.Date) value : new java.sql.Date(DatatypeConverter.parseDate(getAsString()).getTime().getTime());
+  }
 
-	/**
-	 * 
-	 * @throws IllegalArgumentException
-	 */
-	@Override
-	public Date getAsDate() {
-		return isDate() ? (Date) value : DatatypeConverter.parseDateTime(getAsString()).getTime();
-	}
+  /**
+   * Check whether this primitive contains a SQL Time value.
+   *
+   * @return true if this primitive contains a SQL Time value, false otherwise.
+   */
+  public boolean isSqlTime() {
+    return value instanceof java.sql.Time;
+  }
 
-	@Override
-	public java.sql.Date getAsSqlDate() {
-		return isSqlDate() ? (java.sql.Date) value : new java.sql.Date(DatatypeConverter.parseDate(getAsString()).getTime().getTime());
-	}
+  @Override
+  public java.sql.Time getAsSqlTime() {
+    return isSqlTime() ? (java.sql.Time) value : new java.sql.Time(DatatypeConverter.parseDate(getAsString()).getTime().getTime());
+  }
 
-	@Override
-	public java.sql.Time getAsSqlTime() {
-		return isSqlTime() ? (java.sql.Time) value : new java.sql.Time(DatatypeConverter.parseDate(getAsString()).getTime().getTime());
-	}
+  /**
+   * Check whether this primitive contains a SQL Timestamp value.
+   *
+   * @return true if this primitive contains a SQL Timestamp value, false
+   *         otherwise.
+   */
+  public boolean isSqlTimestamp() {
+    return value instanceof java.sql.Timestamp;
+  }
 
-	@Override
-	public java.sql.Timestamp getAsSqlTimestamp() {
-		return isSqlTimestamp() ? (java.sql.Timestamp) value : new java.sql.Timestamp(DatatypeConverter.parseDate(getAsString()).getTime().getTime());
-	}
+  @Override
+  public java.sql.Timestamp getAsSqlTimestamp() {
+    return isSqlTimestamp() ? (java.sql.Timestamp) value
+        : new java.sql.Timestamp(DatatypeConverter.parseDate(getAsString()).getTime().getTime());
+  }
 
-	private static boolean isPrimitiveOrString(Object target) {
-		if (target instanceof String) {
-			return true;
-		}
+  private static boolean isPrimitiveOrStringOrNumberOrDate(Object target) {
+    if (target instanceof String || target instanceof Number || target instanceof Date) {
+      return true;
+    }
+    Class<?> classOfPrimitive = target.getClass();
+    for (Class<?> standardPrimitive : PRIMITIVE_TYPES) {
+      if (standardPrimitive.isAssignableFrom(classOfPrimitive)) {
+        return true;
+      }
+    }
+    return false;
+  }
 
-		Class<?> classOfPrimitive = target.getClass();
-		for (Class<?> standardPrimitive : PRIMITIVE_TYPES) {
-			if (standardPrimitive.isAssignableFrom(classOfPrimitive)) {
-				return true;
-			}
-		}
-		return false;
-	}
+  @Override
+  public int hashCode() {
+    if (value == null) {
+      return 31;
+    }
+    // Using recommended hashing algorithm from
+    // Effective Java for longs and doubles
+    if (isIntegral(this)) {
+      long value = getAsNumber().longValue();
+      return (int) (value ^ (value >>> 32));
+    }
+    if (value instanceof Number) {
+      long value = Double.doubleToLongBits(getAsNumber().doubleValue());
+      return (int) (value ^ (value >>> 32));
+    }
+    return value.hashCode();
+  }
 
-	@Override
-	public int hashCode() {
-		if (value == null) {
-			return 31;
-		}
-		// Using recommended hashing algorithm from Effective Java for longs and
-		// doubles
-		if (isIntegral(this)) {
-			long value = getAsNumber().longValue();
-			return (int) (value ^ (value >>> 32));
-		}
-		if (value instanceof Number) {
-			long value = Double.doubleToLongBits(getAsNumber().doubleValue());
-			return (int) (value ^ (value >>> 32));
-		}
-		return value.hashCode();
-	}
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null || getClass() != obj.getClass()) {
+      return false;
+    }
+    JtonPrimitive other = (JtonPrimitive) obj;
+    if (value == null) {
+      return other.value == null;
+    }
+    if (isIntegral(this) && isIntegral(other)) {
+      return getAsNumber().longValue() == other.getAsNumber().longValue();
+    }
+    if (value instanceof Number && other.value instanceof Number) {
+      double a = getAsNumber().doubleValue();
+      // Java standard types other than double return true for two NaN. So, need
+      // special handling for double.
+      double b = other.getAsNumber().doubleValue();
+      return a == b || (Double.isNaN(a) && Double.isNaN(b));
+    }
+    return value.equals(other.value);
+  }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null || getClass() != obj.getClass()) {
-			return false;
-		}
-		JtonPrimitive other = (JtonPrimitive) obj;
-		if (value == null) {
-			return other.value == null;
-		}
-		if (isIntegral(this) && isIntegral(other)) {
-			return getAsNumber().longValue() == other.getAsNumber().longValue();
-		}
-		if (value instanceof Number && other.value instanceof Number) {
-			double a = getAsNumber().doubleValue();
-			// Java standard types other than double return true for two NaN. So, need
-			// special handling for double.
-			double b = other.getAsNumber().doubleValue();
-			return a == b || (Double.isNaN(a) && Double.isNaN(b));
-		}
-		return value.equals(other.value);
-	}
-
-	/**
-	 * Returns true if the specified number is an integral type (Long, Integer,
-	 * Short, Byte, BigInteger)
-	 */
-	private static boolean isIntegral(JtonPrimitive primitive) {
-		if (primitive.value instanceof Number) {
-			Number number = (Number) primitive.value;
-			return number instanceof BigInteger || number instanceof Long || number instanceof Integer
-					|| number instanceof Short || number instanceof Byte;
-		}
-		return false;
-	}
+  /**
+   * Returns true if the specified number is an integral type (Long, Integer,
+   * Short, Byte, BigInteger)
+   */
+  private static boolean isIntegral(JtonPrimitive primitive) {
+    if (primitive.value instanceof Number) {
+      Number number = (Number) primitive.value;
+      return number instanceof BigInteger || number instanceof Long || number instanceof Integer
+          || number instanceof Short || number instanceof Byte;
+    }
+    return false;
+  }
 }

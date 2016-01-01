@@ -80,7 +80,7 @@ public class JtonOGNL {
 			String key = keys.get(i);
 
 			Map<String, T> adapter = (value instanceof Map) ? (Map<String, T>) value :
-					(value instanceof JtonPrimitive) ? (Map<String, T>) new BeanAdapter(((JtonPrimitive) value).getValue()) :
+					(value instanceof JtonPrimitive) ? (Map<String, T>) new BeanAdapter(((JtonPrimitive) value).getPrimitiveValue()) :
 							(Map<String, T>) new BeanAdapter(value);
 
 			if (adapter.containsKey(key)) {
@@ -123,7 +123,7 @@ public class JtonOGNL {
 		}
 
 		Map<String, T> adapter = (value instanceof Map) ? (Map<String, T>) value :
-				(value instanceof JtonPrimitive) ? (Map<String, T>) new BeanAdapter(((JtonPrimitive) value).getValue()) :
+				(value instanceof JtonPrimitive) ? (Map<String, T>) new BeanAdapter(((JtonPrimitive) value).getPrimitiveValue()) :
 						(Map<String, T>) new BeanAdapter(value);
 
 		Object previousValue;
@@ -205,7 +205,7 @@ public class JtonOGNL {
 			containsKey = false;
 		} else {
 			Map<String, T> adapter = (parent instanceof Map) ? (Map<String, T>) parent :
-					(parent instanceof JtonPrimitive) ? (Map<String, T>) new BeanAdapter(((JtonPrimitive) parent).getValue()) :
+					(parent instanceof JtonPrimitive) ? (Map<String, T>) new BeanAdapter(((JtonPrimitive) parent).getPrimitiveValue()) :
 							(Map<String, T>) new BeanAdapter(parent);
 
 			containsKey = adapter.containsKey(key);
