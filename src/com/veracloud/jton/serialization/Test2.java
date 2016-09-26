@@ -14,32 +14,64 @@
 package com.veracloud.jton.serialization;
 
 import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Map;
 
+import com.veracloud.jton.JtonArray;
 import com.veracloud.jton.JtonElement;
 import com.veracloud.jton.JtonObject;
 
 public class Test2 {
 
-	public static void main(String[] args) throws IOException, SerializationException {
-		String content = new String(Files.readAllBytes(Paths.get("test-files/test-data-01.json")));
-		JtonElement data = JsonSerializer.parse(content);
-		
-		JtonObject o = new JtonObject();
-		o.add("data", data);
+  public static JtonElement convert(JtonElement elem) {
+    JtonObject result = new JtonObject();
 
-		XmlSerializer xml = new XmlSerializer();
-		xml.writeObject(o, System.out);
-		
-		StringWriter w = new StringWriter();
-		xml.writeObject(o, w);
-		
-		System.out.println();
-		
-		xml.writeObject(xml.readObject(new StringReader(w.toString())), System.out);
-	}
-	
+    if (elem.isJtonObject()) {
+      JtonObject obj = elem.getAsJtonObject();
+      convertChild(result, "", obj);
+    } else if (elem.isJtonArray()) {
+      JtonArray array = elem.getAsJtonArray();
+      convertChild(result, "", array);
+    }
+
+    return result;
+  }
+
+  private static void convertChild(JtonObject entity, String keyOfParent, JtonObject elem) {
+    for (Map.Entry<String, JtonElement> entry : elem.getAsJtonObject().entrySet()) {
+      String key = keyOfParent + "/" + entry.getKey();
+      JtonElement child = entry.getValue();
+      if (child.isJtonNull() || child.isJtonPrimitive()) {
+        entity.add(key, child);
+      } else if (child.isJtonObject()) {
+        convertChild(entity, key, child.getAsJtonObject());
+      } else if (child.isJtonArray()) {
+        convertChild(entity, key, child.getAsJtonArray());
+      }
+    }
+  }
+
+  private static void convertChild(JtonObject entity, String keyOfParent, JtonArray array) {
+    for (int i = 0, n = array.size(); i < n; i++) {
+      String iKey = keyOfParent + "/" + i;
+      JtonElement item = array.get(i);
+      if (item.isJtonNull() || item.isJtonPrimitive()) {
+        entity.add(iKey, item);
+      } else if (item.isJtonObject()) {
+        convertChild(entity, iKey, item.getAsJtonObject());
+      } else if (item.isJtonArray()) {
+        convertChild(entity, iKey, item.getAsJtonArray());
+      }
+    }
+  }
+
+  public static void main(String[] args) throws IOException, SerializationException {
+    String content = new String(Files.readAllBytes(Paths.get("test-files/test-data-01.json")));
+    JtonElement data = JsonSerializer.parse(content);
+
+    System.out.println(data.toString(2));
+    System.out.println(convert(data).toString(2));
+  }
+
 }

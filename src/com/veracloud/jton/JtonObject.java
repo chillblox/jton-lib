@@ -31,321 +31,214 @@ import com.veracloud.jton.internal.LinkedTreeMap;
  */
 @XmlRootElement(name = "item")
 @XmlAccessorType(XmlAccessType.FIELD)
-public final class JtonObject extends JtonElement implements
-		Map<String, JtonElement> {
-	private final LinkedTreeMap<String, JtonElement> members = new LinkedTreeMap<String, JtonElement>();
+public class JtonObject extends JtonElement implements Map<String, JtonElement> {
+  private final LinkedTreeMap<String, JtonElement> members = new LinkedTreeMap<String, JtonElement>();
+  
+  public JtonObject() {
+    super();
+  }
+  
+  public JtonObject(Map<String, Object> map) {
+    if (map != null) {
+      for (Map.Entry<String, Object> entry : map.entrySet()) {
+        add(entry.getKey(), entry.getValue());
+      }
+    }
+  }
 
-	@Override
-	public JtonObject deepCopy() {
-		JtonObject result = new JtonObject();
-		for (Map.Entry<String, JtonElement> entry : members.entrySet()) {
-			result.add(entry.getKey(), entry.getValue().deepCopy());
-		}
-		return result;
-	}
+  @Override
+  public JtonObject deepCopy() {
+    JtonObject result = new JtonObject();
+    for (Map.Entry<String, JtonElement> entry : members.entrySet()) {
+      result.add(entry.getKey(), entry.getValue().deepCopy());
+    }
+    return result;
+  }
 
-	// /**
-	// * Adds a member, which is a name-value pair, to self. The name must be a
-	// * String, but the value can be an arbitrary JsonElement, thereby allowing
-	// * you to build a full tree of JsonElements rooted at this node.
-	// *
-	// * @param property
-	// * name of the member.
-	// * @param value
-	// * the member object.
-	// */
-	// public void add(String property, JtonElement value) {
-	// if (value == null) {
-	// value = JtonNull.INSTANCE;
-	// }
-	// members.put(property, value);
-	// }
-	//
-	// /**
-	// * Removes the {@code property} from this {@link JtonObject}.
-	// *
-	// * @param property
-	// * name of the member that should be removed.
-	// * @return the {@link JtonElement} object that is being removed.
-	// */
-	// public JtonElement remove(String property) {
-	// return members.remove(property);
-	// }
-	//
-	// /**
-	// * Convenience method to add a primitive member. The specified value is
-	// * converted to a JsonPrimitive of String.
-	// *
-	// * @param property
-	// * name of the member.
-	// * @param value
-	// * the string value associated with the member.
-	// */
-	// public void add(String property, String value) {
-	// add(property, createJsonElement(value));
-	// }
-	//
-	// /**
-	// * Convenience method to add a primitive member. The specified value is
-	// * converted to a JsonPrimitive of Number.
-	// *
-	// * @param property
-	// * name of the member.
-	// * @param value
-	// * the number value associated with the member.
-	// */
-	// public void add(String property, Number value) {
-	// add(property, createJsonElement(value));
-	// }
-	//
-	// /**
-	// * Convenience method to add a boolean member. The specified value is
-	// * converted to a JsonPrimitive of Boolean.
-	// *
-	// * @param property
-	// * name of the member.
-	// * @param value
-	// * the number value associated with the member.
-	// */
-	// public void add(String property, Boolean value) {
-	// add(property, createJsonElement(value));
-	// }
-	//
-	// /**
-	// * Convenience method to add a char member. The specified value is converted
-	// * to a JsonPrimitive of Character.
-	// *
-	// * @param property
-	// * name of the member.
-	// * @param value
-	// * the number value associated with the member.
-	// */
-	// public void add(String property, Character value) {
-	// add(property, createJsonElement(value));
-	// }
-	//
-	// /**
-	// * Convenience method to add a {@link Date} member. The specified value is
-	// * converted to a JtonPrimitive of Date.
-	// *
-	// * @param property
-	// * name of the member.
-	// * @param value
-	// * the date value associated with the member.
-	// */
-	// public void add(String property, Date value) {
-	// add(property, createJsonElement(value));
-	// }
+  /**
+   * Convenience method to add a member. The specified value is converted to a
+   * JtonPrimitive at runtime.
+   * 
+   * @param property
+   *          name of the member.
+   * @param value
+   *          the value associated with the member.
+   */
+  public void add(String property, Object value) {
+    if (value == this) {
+      throw new IllegalArgumentException("cyclic reference");
+    }
+    
+    if (value == null) {
+      value = JtonNull.INSTANCE;
+      members.put(property, (JtonElement) value);
+    } else if (value instanceof JtonElement) {
+      members.put(property, (JtonElement) value);
+    } else {
+      add(property, createJsonElement(value));
+    }
+  }
 
-	/**
-	 * Convenience method to add a member. The specified value is converted to a
-	 * JtonPrimitive at runtime.
-	 * 
-	 * @param property
-	 *          name of the member.
-	 * @param value
-	 *          the value associated with the member.
-	 */
-	public void add(String property, Object value) {
-		if (value == null) {
-			value = JtonNull.INSTANCE;
-			members.put(property, (JtonElement) value);
-		} else if (value instanceof JtonElement) {
-			members.put(property, (JtonElement) value);
-		} else {
-			add(property, createJsonElement(value));
-		}
-	}
+  /**
+   * Convenience method to add a member. The specified value is converted to a
+   * JtonPrimitive id {@code jtonTransient} is {@code false} otherwise not.
+   * 
+   * @param property
+   *          name of the member.
+   * @param value
+   *          the value associated with the member.
+   * @param jtonTransient
+   *          if {@code false} the is converted to a JtonPrimitive; otherwise
+   *          the value will be added as it is.
+   */
+  public void add(String property, Object value, boolean jtonTransient) {
+    if (value == this) {
+      throw new IllegalArgumentException("cyclic reference");
+    }
+    
+    add(property, createJsonElement(value, jtonTransient));
+  }
 
-	/**
-	 * Convenience method to add a member. The specified value is converted to a
-	 * JtonPrimitive id {@code jtonTransient} is {@code false} otherwise not.
-	 * 
-	 * @param property
-	 *          name of the member.
-	 * @param value
-	 *          the value associated with the member.
-	 * @param jtonTransient
-	 *          if {@code false} the is converted to a JtonPrimitive; otherwise
-	 *          the value will be added as it is.
-	 */
-	public void add(String property, Object value, boolean jtonTransient) {
-		add(property, createJsonElement(value, jtonTransient));
-	}
+  /**
+   * Removes a member, which is a name-value pair.
+   *
+   * @param property
+   *          name of the member.
+   * @param value
+   *          the member object.
+   */
+  public JtonElement remove(String key) {
+    return members.remove(key);
+  }
 
-	/**
-	 * Removes a member, which is a name-value pair.
-	 *
-	 * @param property
-	 *          name of the member.
-	 * @param value
-	 *          the member object.
-	 */
-	public JtonElement remove(String key) {
-		return members.remove(key);
-	}
+  /**
+   * Creates the proper {@link JtonElement} object from the given {@code value}
+   * object.
+   *
+   * @param value
+   *          the object to generate the {@link JtonElement} for
+   * @return a {@link JtonPrimitive} if the {@code value} is not null, otherwise
+   *         a {@link JtonNull}
+   */
+  static JtonElement createJsonElement(Object value) {
+    return createJsonElement(value, false);
+  }
 
-	/**
-	 * Creates the proper {@link JtonElement} object from the given {@code value}
-	 * object.
-	 *
-	 * @param value
-	 *          the object to generate the {@link JtonElement} for
-	 * @return a {@link JtonPrimitive} if the {@code value} is not null, otherwise
-	 *         a {@link JtonNull}
-	 */
-	private JtonElement createJsonElement(Object value) {
-		return createJsonElement(value, false);
-	}
+  static JtonElement createJsonElement(Object value, boolean jtonTransient) {
+    return (value == null && !jtonTransient) ? JtonNull.INSTANCE
+        : new JtonPrimitive(value, jtonTransient);
+  }
 
-	private JtonElement createJsonElement(Object value, boolean jtonTransient) {
-		return (value == null && !jtonTransient) ? JtonNull.INSTANCE
-				: new JtonPrimitive(value, jtonTransient);
-	}
+  /**
+   * Returns a set of members of this object. The set is ordered, and the order
+   * is in which the elements were added.
+   *
+   * @return a set of members of this object.
+   */
+  @Override
+  public Set<Map.Entry<String, JtonElement>> entrySet() {
+    return members.entrySet();
+  }
 
-	/**
-	 * Returns a set of members of this object. The set is ordered, and the order
-	 * is in which the elements were added.
-	 *
-	 * @return a set of members of this object.
-	 */
-	@Override
-	public Set<Map.Entry<String, JtonElement>> entrySet() {
-		return members.entrySet();
-	}
+  /**
+   * Convenience method to check if a member with the specified name is present
+   * in this object.
+   *
+   * @param memberName
+   *          name of the member that is being checked for presence.
+   * @return true if there is a member with the specified name, false otherwise.
+   */
+  public boolean has(String memberName) {
+    return members.containsKey(memberName);
+  }
 
-	/**
-	 * Convenience method to check if a member with the specified name is present
-	 * in this object.
-	 *
-	 * @param memberName
-	 *          name of the member that is being checked for presence.
-	 * @return true if there is a member with the specified name, false otherwise.
-	 */
-	public boolean has(String memberName) {
-		return members.containsKey(memberName);
-	}
+  /**
+   * Returns the member with the specified name.
+   *
+   * @param memberName
+   *          name of the member that is being requested.
+   * @return the member matching the name; {@link JtonNull} if no such member exists.
+   */
+  public JtonElement get(String memberName) {
+    if (members.containsKey(memberName))
+      return members.get(memberName);
+    else
+      return JtonNull.INSTANCE;
+  }
 
-	/**
-	 * Returns the member with the specified name.
-	 *
-	 * @param memberName
-	 *          name of the member that is being requested.
-	 * @return the member matching the name. Null if no such member exists.
-	 */
-	public JtonElement get(String memberName) {
-		if (members.containsKey(memberName))
-			return members.get(memberName);
-		else
-			return JtonNull.INSTANCE;
-	}
+  @Override
+  public boolean equals(Object o) {
+    return (o == this)
+        || (o instanceof JtonObject && ((JtonObject) o).members
+            .equals(members));
+  }
 
-	/**
-	 * Convenience method to get the specified member as a JsonPrimitive element.
-	 *
-	 * @param memberName
-	 *          name of the member being requested.
-	 * @return the JsonPrimitive corresponding to the specified member.
-	 */
-//	public JtonPrimitive getAsJtonPrimitive(String memberName) {
-//		return (JtonPrimitive) members.get(memberName);
-//	}
+  @Override
+  public int hashCode() {
+    return members.hashCode();
+  }
 
-	/**
-	 * Convenience method to get the specified member as a JsonArray.
-	 *
-	 * @param memberName
-	 *          name of the member being requested.
-	 * @return the JsonArray corresponding to the specified member.
-	 */
-//	public JtonArray getAsJtonArray(String memberName) {
-//		return (JtonArray) members.get(memberName);
-//	}
+  @Override
+  public int size() {
+    return members.size();
+  }
 
-	/**
-	 * Convenience method to get the specified member as a JsonObject.
-	 *
-	 * @param memberName
-	 *          name of the member being requested.
-	 * @return the JsonObject corresponding to the specified member.
-	 */
-//	public JtonObject getAsJtonObject(String memberName) {
-//		return (JtonObject) members.get(memberName);
-//	}
+  @Override
+  public boolean isEmpty() {
+    return members.isEmpty();
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		return (o == this)
-				|| (o instanceof JtonObject && ((JtonObject) o).members
-						.equals(members));
-	}
+  @Override
+  @Deprecated
+  public boolean containsKey(Object key) {
+    return members.containsKey(key);
+  }
 
-	@Override
-	public int hashCode() {
-		return members.hashCode();
-	}
+  @Override
+  @Deprecated
+  public boolean containsValue(Object value) {
+    return members.containsValue(value);
+  }
 
-	@Override
-	public int size() {
-		return members.size();
-	}
+  @Override
+  @Deprecated
+  public JtonElement get(Object key) {
+    return members.get(key);
+  }
 
-	@Override
-	public boolean isEmpty() {
-		return members.isEmpty();
-	}
+  @Override
+  @Deprecated
+  public JtonElement put(String key, JtonElement value) {
+    add(key, value);
+    return value;
+  }
 
-	@Override
-	@Deprecated
-	public boolean containsKey(Object key) {
-		return members.containsKey(key);
-	}
+  @Override
+  @Deprecated
+  public JtonElement remove(Object key) {
+    return members.remove(key);
+  }
 
-	@Override
-	@Deprecated
-	public boolean containsValue(Object value) {
-		return members.containsValue(value);
-	}
+  @Override
+  public void putAll(Map<? extends String, ? extends JtonElement> m) {
+    for (Map.Entry<? extends String, ? extends JtonElement> entry : m
+        .entrySet()) {
+      add(entry.getKey(), entry.getValue());
+    }
+  }
 
-	@Override
-	@Deprecated
-	public JtonElement get(Object key) {
-		return members.get(key);
-	}
+  @Override
+  public void clear() {
+    members.clear();
+  }
 
-	@Override
-	@Deprecated
-	public JtonElement put(String key, JtonElement value) {
-		add(key, value);
-		return value;
-	}
+  @Override
+  public Set<String> keySet() {
+    return members.keySet();
+  }
 
-	@Override
-	@Deprecated
-	public JtonElement remove(Object key) {
-		return members.remove(key);
-	}
-
-	@Override
-	public void putAll(Map<? extends String, ? extends JtonElement> m) {
-		for (Map.Entry<? extends String, ? extends JtonElement> entry : m
-				.entrySet()) {
-			add(entry.getKey(), entry.getValue());
-		}
-	}
-
-	@Override
-	public void clear() {
-		members.clear();
-	}
-
-	@Override
-	public Set<String> keySet() {
-		return members.keySet();
-	}
-
-	@Override
-	public Collection<JtonElement> values() {
-		return members.values();
-	}
+  @Override
+  public Collection<JtonElement> values() {
+    return members.values();
+  }
 }

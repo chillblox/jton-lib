@@ -52,6 +52,15 @@ public class JtonOGNL {
 	public static <T> T get(Object root, String path) {
 		return (T) get(root, parse(path));
 	}
+	
+	public static <T> T get(Object root, String path, T fallback) {
+	  try {
+	    T value = get(root, path);
+	    return (value != null) ? value : fallback;
+	  } catch(RuntimeException e) {
+	    return fallback;
+	  }
+	}
 
 	/**
 	 * Returns the value at a given path.

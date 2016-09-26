@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 /**
  * A class representing an array type in Json. An array is a list of {@link JtonElement}s each of
@@ -26,6 +27,17 @@ import java.util.ListIterator;
  * elements are added is preserved.
  */
 public final class JtonArray extends JtonElement implements List<JtonElement> {
+  
+  public static JtonArray create(List<Map<String, Object>> list) {
+    JtonArray result = new JtonArray();
+    for (Map<String, Object> item : list) {
+      result.add(new JtonObject(item));
+    }
+    return result;
+  }
+  
+  // ---
+  
   private final List<JtonElement> elements;
 
   /**
@@ -33,6 +45,11 @@ public final class JtonArray extends JtonElement implements List<JtonElement> {
    */
   public JtonArray() {
     elements = new ArrayList<JtonElement>();
+  }
+  
+  @SuppressWarnings("unchecked")
+  public JtonArray(List<? extends JtonElement> elements) {
+    this.elements = (List<JtonElement>) elements;
   }
 
   @Override
@@ -42,6 +59,21 @@ public final class JtonArray extends JtonElement implements List<JtonElement> {
       result.add(element.deepCopy());
     }
     return result;
+  }
+  
+  public boolean addObject(Object value) {
+    if (value == this) {
+      throw new IllegalArgumentException("cyclic reference");
+    }
+    
+    if (value == null) {
+      value = JtonNull.INSTANCE;
+      return add((JtonElement) value);
+    } else if (value instanceof JtonElement) {
+      return add((JtonElement) value);
+    } else {
+      return add(JtonObject.createJsonElement(value));
+    }
   }
   
   public boolean add(Boolean bool) {
@@ -442,4 +474,17 @@ public final class JtonArray extends JtonElement implements List<JtonElement> {
 	public List<JtonElement> subList(int fromIndex, int toIndex) {
 		return elements.subList(fromIndex, toIndex);
 	}
+	
+	public JtonObject toMap(JtonArray arr, KeyProvider callback) {
+    JtonObject map = new JtonObject();
+    
+    for(JtonElement e : arr) {
+      String key = callback.call(e);
+      if (e != null) {
+        map.add(key, e);
+      }
+    }
+    
+    return map;
+  }
 }
