@@ -17,7 +17,7 @@ package com.veracloud.jton;
  * A class representing a Jton {@code null} value.
  */
 public final class JtonNull extends JtonElement {
-	
+  
   /**
    * singleton for JsonNull
    */

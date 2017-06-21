@@ -177,20 +177,26 @@ public abstract class JtonElement {
    * @throws IllegalStateException
    *           if the element is of another type.
    */
-  public JtonNull getAsJtonNull() {
-    if (isJtonNull()) {
-      return (JtonNull) this;
-    }
-    throw new IllegalStateException("This is not a JtonNull: " + this);
-  }
+  //@formatter:off
+//  public JtonNull getAsJtonNull() {
+//    if (isJtonNull()) {
+//      return (JtonNull) this;
+//    }
+//    throw new IllegalStateException("This is not a JtonNull: " + this);
+//  }
+//
+//  public JtonNull getAsJtonNull(JtonNull fallback) {
+//    try {
+//      return isJtonPrimitive() ? getAsJtonNull() : fallback;
+//    } catch (ClassCastException e) {
+//      return fallback;
+//    }
+//  }
+  //@formatter:on
 
-  public JtonNull getAsJtonNull(JtonNull fallback) {
-    try {
-      return isJtonPrimitive() ? getAsJtonNull() : fallback;
-    } catch (ClassCastException e) {
-      return fallback;
-    }
-  }
+  // -----------------------------------------------------------------------
+  // PRIMITIVE DATA TYPES
+  // -----------------------------------------------------------------------
 
   /**
    * convenience method to get this element as a boolean value.
@@ -208,6 +214,14 @@ public abstract class JtonElement {
   }
 
   public boolean getAsBoolean(boolean fallback) {
+    try {
+      return isJtonPrimitive() ? getAsBoolean() : fallback;
+    } catch (Throwable t) {
+      return fallback;
+    }
+  }
+
+  public Boolean getAsBoolean(Boolean fallback) {
     try {
       return isJtonPrimitive() ? getAsBoolean() : fallback;
     } catch (Throwable t) {
@@ -284,6 +298,14 @@ public abstract class JtonElement {
     }
   }
 
+  public Double getAsDouble(Double fallback) {
+    try {
+      return isJtonPrimitive() ? getAsDouble() : fallback;
+    } catch (Throwable t) {
+      return fallback;
+    }
+  }
+
   /**
    * convenience method to get this element as a primitive float value.
    *
@@ -300,6 +322,14 @@ public abstract class JtonElement {
   }
 
   public float getAsFloat(float fallback) {
+    try {
+      return isJtonPrimitive() ? getAsFloat() : fallback;
+    } catch (Throwable t) {
+      return fallback;
+    }
+  }
+
+  public Float getAsFloat(Float fallback) {
     try {
       return isJtonPrimitive() ? getAsFloat() : fallback;
     } catch (Throwable t) {
@@ -330,6 +360,14 @@ public abstract class JtonElement {
     }
   }
 
+  public Long getAsLong(Long fallback) {
+    try {
+      return isJtonPrimitive() ? getAsLong() : fallback;
+    } catch (Throwable t) {
+      return fallback;
+    }
+  }
+
   /**
    * convenience method to get this element as a primitive integer value.
    *
@@ -345,7 +383,15 @@ public abstract class JtonElement {
     throw new UnsupportedOperationException(getClass().getSimpleName());
   }
 
-  public int getAsInt(int fallback) {
+  public int getAsInteger(int fallback) {
+    try {
+      return isJtonPrimitive() ? getAsInt() : fallback;
+    } catch (Throwable t) {
+      return fallback;
+    }
+  }
+  
+  public Integer getAsInteger(Integer fallback) {
     try {
       return isJtonPrimitive() ? getAsInt() : fallback;
     } catch (Throwable t) {
@@ -387,13 +433,21 @@ public abstract class JtonElement {
    *           if the element is of the type {@link JtonArray} but contains more
    *           than a single element.
    */
-  public char getAsCharacter() {
+  public char getAsChar() {
     throw new UnsupportedOperationException(getClass().getSimpleName());
   }
 
-  public char getAsCharacter(char fallback) {
+  public char getAsChar(char fallback) {
     try {
-      return isJtonPrimitive() ? getAsCharacter() : fallback;
+      return isJtonPrimitive() ? getAsChar() : fallback;
+    } catch (Throwable t) {
+      return fallback;
+    }
+  }
+
+  public Character getAsCharacter(Character fallback) {
+    try {
+      return isJtonPrimitive() ? getAsChar() : fallback;
     } catch (Throwable t) {
       return fallback;
     }
@@ -463,6 +517,14 @@ public abstract class JtonElement {
   }
 
   public short getAsShort(short fallback) {
+    try {
+      return isJtonPrimitive() ? getAsShort() : fallback;
+    } catch (Throwable t) {
+      return fallback;
+    }
+  }
+
+  public Short getAsShort(Short fallback) {
     try {
       return isJtonPrimitive() ? getAsShort() : fallback;
     } catch (Throwable t) {

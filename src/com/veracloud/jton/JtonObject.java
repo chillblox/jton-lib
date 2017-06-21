@@ -32,13 +32,16 @@ import com.veracloud.jton.internal.LinkedTreeMap;
 @XmlRootElement(name = "item")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JtonObject extends JtonElement implements Map<String, JtonElement> {
-  private final LinkedTreeMap<String, JtonElement> members = new LinkedTreeMap<String, JtonElement>();
+  
+  private final Map<String, JtonElement> members;
   
   public JtonObject() {
-    super();
+    members = new LinkedTreeMap<String, JtonElement>();
   }
-  
+
   public JtonObject(Map<String, Object> map) {
+    this();
+    
     if (map != null) {
       for (Map.Entry<String, Object> entry : map.entrySet()) {
         add(entry.getKey(), entry.getValue());
@@ -64,19 +67,26 @@ public class JtonObject extends JtonElement implements Map<String, JtonElement> 
    * @param value
    *          the value associated with the member.
    */
-  public void add(String property, Object value) {
+  @Deprecated
+  public JtonObject add(String property, Object value) {
+    return set(property, value);
+  }
+
+  public JtonObject set(String property, Object value) {
     if (value == this) {
       throw new IllegalArgumentException("cyclic reference");
     }
-    
+
     if (value == null) {
       value = JtonNull.INSTANCE;
       members.put(property, (JtonElement) value);
     } else if (value instanceof JtonElement) {
       members.put(property, (JtonElement) value);
     } else {
-      add(property, createJsonElement(value));
+      members.put(property, createJsonElement(value));
     }
+
+    return this;
   }
 
   /**
@@ -90,13 +100,19 @@ public class JtonObject extends JtonElement implements Map<String, JtonElement> 
    * @param jtonTransient
    *          if {@code false} the is converted to a JtonPrimitive; otherwise
    *          the value will be added as it is.
+   * @return
    */
-  public void add(String property, Object value, boolean jtonTransient) {
+  @Deprecated
+  public JtonObject add(String property, Object value, boolean jtonTransient) {
+    return set(property, value, jtonTransient);
+  }
+
+  public JtonObject set(String property, Object value, boolean jtonTransient) {
     if (value == this) {
       throw new IllegalArgumentException("cyclic reference");
     }
-    
-    add(property, createJsonElement(value, jtonTransient));
+
+    return add(property, createJsonElement(value, jtonTransient));
   }
 
   /**
@@ -157,7 +173,8 @@ public class JtonObject extends JtonElement implements Map<String, JtonElement> 
    *
    * @param memberName
    *          name of the member that is being requested.
-   * @return the member matching the name; {@link JtonNull} if no such member exists.
+   * @return the member matching the name; {@link JtonNull} if no such member
+   *         exists.
    */
   public JtonElement get(String memberName) {
     if (members.containsKey(memberName))
@@ -190,19 +207,19 @@ public class JtonObject extends JtonElement implements Map<String, JtonElement> 
 
   @Override
   @Deprecated
-  public boolean containsKey(Object key) {
+  public final boolean containsKey(Object key) {
     return members.containsKey(key);
   }
 
   @Override
   @Deprecated
-  public boolean containsValue(Object value) {
+  public final boolean containsValue(Object value) {
     return members.containsValue(value);
   }
 
   @Override
   @Deprecated
-  public JtonElement get(Object key) {
+  public final JtonElement get(Object key) {
     return members.get(key);
   }
 
@@ -215,7 +232,7 @@ public class JtonObject extends JtonElement implements Map<String, JtonElement> 
 
   @Override
   @Deprecated
-  public JtonElement remove(Object key) {
+  public final JtonElement remove(Object key) {
     return members.remove(key);
   }
 

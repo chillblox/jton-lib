@@ -156,13 +156,16 @@ public class JtonOGNL {
 	 *
 	 * @return The value that was removed.
 	 */
-	@SuppressWarnings("unchecked")
 	public static <T> T remove(Object root, String path) {
-		if (root == null) {
-			throw new IllegalArgumentException("root is null.");
-		}
+		return remove(root, parse(path));
+	}
+	
+	@SuppressWarnings("unchecked")
+  public static <T> T remove(Object root, List<String> keys) {
+    if (root == null) {
+      throw new IllegalArgumentException("root is null.");
+    }
 
-		List<String> keys = parse(path);
 		if (keys.size() == 0) {
 			throw new IllegalArgumentException("Path is empty.");
 		}

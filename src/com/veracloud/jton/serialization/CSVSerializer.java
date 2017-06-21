@@ -434,15 +434,15 @@ public class CSVSerializer implements Serializer<JtonArray> {
 
 		CSVSerializer csv = new CSVSerializer();
 		csv.setKeys(o.keySet());
-		// csv.setWriteKeys(true);
-		// csv.writeObject(a, System.out);
+		csv.setWriteKeys(true);
+		//csv.writeObject(a, System.out);
 
 		csv.writeObject(a, w);
 
 		System.out.println(w.toString());
 
-		JtonArray aa = csv.readObject(new StringReader(w.toString()));
-		System.out.println(aa.get(0).getAsJtonObject().get("date").getAsDate());
+		//JtonArray aa = csv.readObject(new StringReader(w.toString()));
+		//System.out.println(aa.get(0).getAsJtonObject().get("date").getAsDate());
 
 	}
 

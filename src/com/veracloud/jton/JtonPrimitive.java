@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import javax.xml.bind.DatatypeConverter;
 
@@ -27,7 +28,7 @@ import com.veracloud.jton.internal.LazilyParsedNumber;
  * A class representing a Json primitive value. A primitive value is either a
  * String, a Java primitive, or a Java primitive wrapper type.
  */
-public final class JtonPrimitive extends JtonElement {
+public class JtonPrimitive extends JtonElement {
 
   /**
    * Primitive types.
@@ -49,11 +50,12 @@ public final class JtonPrimitive extends JtonElement {
    * Primitive value.
    */
   private Object value;
+  private transient Object _value;
 
   /**
-   * Flag indicating that the primitive value ßtransient.
+   * Flag indicating that the primitive value is transient.
    */
-  private boolean jtonTransient = false;
+  private transient boolean jtonTransient = false;
 
   /**
    * Create a primitive using the specified Object. It must be an instance of
@@ -96,12 +98,12 @@ public final class JtonPrimitive extends JtonElement {
 
   @Override
   public Object getPrimitiveValue() {
-    return value;
+    return (jtonTransient) ? _value : value;
   }
 
   final void setPrimitiveValue(Object primitive) {
     if (isTransient()) {
-      this.value = primitive;
+      this._value = primitive;
     } else if (primitive instanceof Character) {
       // convert characters to strings since in JSON, characters are represented
       // as a single character string
@@ -119,7 +121,7 @@ public final class JtonPrimitive extends JtonElement {
    * @return true if this primitive contains a boolean value, false otherwise.
    */
   public boolean isBoolean() {
-    return value instanceof Boolean;
+    return getPrimitiveValue() instanceof Boolean;
   }
 
   /**
@@ -130,7 +132,7 @@ public final class JtonPrimitive extends JtonElement {
   @Override
   public boolean getAsBoolean() {
     if (isBoolean()) {
-      return (Boolean) value;
+      return (Boolean) getPrimitiveValue();
     } else {
       // Check to see if the value as a String is "true" in any case.
       return Boolean.parseBoolean(getAsString());
@@ -143,7 +145,7 @@ public final class JtonPrimitive extends JtonElement {
    * @return true if this primitive contains a Number, false otherwise.
    */
   public boolean isNumber() {
-    return value instanceof Number;
+    return getPrimitiveValue() instanceof Number;
   }
 
   /**
@@ -155,6 +157,7 @@ public final class JtonPrimitive extends JtonElement {
    */
   @Override
   public Number getAsNumber() {
+    Object value = getPrimitiveValue();
     return value instanceof String ? new LazilyParsedNumber((String) value) : (Number) value;
   }
 
@@ -164,7 +167,7 @@ public final class JtonPrimitive extends JtonElement {
    * @return true if this primitive contains a String value, false otherwise.
    */
   public boolean isString() {
-    return value instanceof String;
+    return getPrimitiveValue() instanceof String;
   }
 
   /**
@@ -180,7 +183,7 @@ public final class JtonPrimitive extends JtonElement {
       return String.valueOf(getAsBoolean());
     } else if (isDate()) {
       Date d = getAsDate();
-      Calendar c = Calendar.getInstance();
+      Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
       c.setTime(d);
       if (d instanceof java.sql.Date) {
         return DatatypeConverter.printDate(c);
@@ -190,7 +193,7 @@ public final class JtonPrimitive extends JtonElement {
         return DatatypeConverter.printDateTime(c);
       }
     } else {
-      return (String) value;
+      return (String) getPrimitiveValue();
     }
   }
 
@@ -215,6 +218,7 @@ public final class JtonPrimitive extends JtonElement {
    */
   @Override
   public BigDecimal getAsBigDecimal() {
+    Object value = getPrimitiveValue();
     return value instanceof BigDecimal ? (BigDecimal) value : new BigDecimal(value.toString());
   }
 
@@ -227,6 +231,7 @@ public final class JtonPrimitive extends JtonElement {
    */
   @Override
   public BigInteger getAsBigInteger() {
+    Object value = getPrimitiveValue();
     return value instanceof BigInteger ? (BigInteger) value : new BigInteger(value.toString());
   }
 
@@ -296,7 +301,7 @@ public final class JtonPrimitive extends JtonElement {
    * @return get this element as a primitive char.
    */
   @Override
-  public char getAsCharacter() {
+  public char getAsChar() {
     return getAsString().charAt(0);
   }
 
@@ -306,7 +311,7 @@ public final class JtonPrimitive extends JtonElement {
    * @return true if this primitive contains a Date value, false otherwise.
    */
   public boolean isDate() {
-    return value instanceof Date;
+    return getPrimitiveValue() instanceof Date;
   }
 
   /**
@@ -315,7 +320,7 @@ public final class JtonPrimitive extends JtonElement {
    */
   @Override
   public Date getAsDate() {
-    return isDate() ? (Date) value : DatatypeConverter.parseDateTime(getAsString()).getTime();
+    return isDate() ? (Date) getPrimitiveValue() : DatatypeConverter.parseDateTime(getAsString()).getTime();
   }
 
   /**
@@ -324,12 +329,13 @@ public final class JtonPrimitive extends JtonElement {
    * @return true if this primitive contains a SQL Date value, false otherwise.
    */
   public boolean isSqlDate() {
-    return value instanceof java.sql.Date;
+    return getPrimitiveValue() instanceof java.sql.Date;
   }
 
   @Override
   public java.sql.Date getAsSqlDate() {
-    return isSqlDate() ? (java.sql.Date) value : new java.sql.Date(DatatypeConverter.parseDate(getAsString()).getTime().getTime());
+    return isSqlDate() ? (java.sql.Date) getPrimitiveValue()
+        : new java.sql.Date(DatatypeConverter.parseDate(getAsString()).getTime().getTime());
   }
 
   /**
@@ -338,12 +344,13 @@ public final class JtonPrimitive extends JtonElement {
    * @return true if this primitive contains a SQL Time value, false otherwise.
    */
   public boolean isSqlTime() {
-    return value instanceof java.sql.Time;
+    return getPrimitiveValue() instanceof java.sql.Time;
   }
 
   @Override
   public java.sql.Time getAsSqlTime() {
-    return isSqlTime() ? (java.sql.Time) value : new java.sql.Time(DatatypeConverter.parseDate(getAsString()).getTime().getTime());
+    return isSqlTime() ? (java.sql.Time) getPrimitiveValue()
+        : new java.sql.Time(DatatypeConverter.parseDate(getAsString()).getTime().getTime());
   }
 
   /**
@@ -353,12 +360,12 @@ public final class JtonPrimitive extends JtonElement {
    *         otherwise.
    */
   public boolean isSqlTimestamp() {
-    return value instanceof java.sql.Timestamp;
+    return getPrimitiveValue() instanceof java.sql.Timestamp;
   }
 
   @Override
   public java.sql.Timestamp getAsSqlTimestamp() {
-    return isSqlTimestamp() ? (java.sql.Timestamp) value
+    return isSqlTimestamp() ? (java.sql.Timestamp) getPrimitiveValue()
         : new java.sql.Timestamp(DatatypeConverter.parseDate(getAsString()).getTime().getTime());
   }
 
@@ -377,7 +384,8 @@ public final class JtonPrimitive extends JtonElement {
 
   @Override
   public int hashCode() {
-    if (value == null) {
+    Object _value = getPrimitiveValue();
+    if (_value == null) {
       return 31;
     }
     // Using recommended hashing algorithm from
@@ -386,11 +394,11 @@ public final class JtonPrimitive extends JtonElement {
       long value = getAsNumber().longValue();
       return (int) (value ^ (value >>> 32));
     }
-    if (value instanceof Number) {
+    if (_value instanceof Number) {
       long value = Double.doubleToLongBits(getAsNumber().doubleValue());
       return (int) (value ^ (value >>> 32));
     }
-    return value.hashCode();
+    return _value.hashCode();
   }
 
   @Override
@@ -401,21 +409,22 @@ public final class JtonPrimitive extends JtonElement {
     if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
+    Object value = getPrimitiveValue();
     JtonPrimitive other = (JtonPrimitive) obj;
     if (value == null) {
-      return other.value == null;
+      return other.getPrimitiveValue() == null;
     }
     if (isIntegral(this) && isIntegral(other)) {
       return getAsNumber().longValue() == other.getAsNumber().longValue();
     }
-    if (value instanceof Number && other.value instanceof Number) {
+    if (value instanceof Number && other.getPrimitiveValue() instanceof Number) {
       double a = getAsNumber().doubleValue();
       // Java standard types other than double return true for two NaN. So, need
       // special handling for double.
       double b = other.getAsNumber().doubleValue();
       return a == b || (Double.isNaN(a) && Double.isNaN(b));
     }
-    return value.equals(other.value);
+    return value.equals(other.getPrimitiveValue());
   }
 
   /**
@@ -423,8 +432,8 @@ public final class JtonPrimitive extends JtonElement {
    * Short, Byte, BigInteger)
    */
   private static boolean isIntegral(JtonPrimitive primitive) {
-    if (primitive.value instanceof Number) {
-      Number number = (Number) primitive.value;
+    if (primitive.getPrimitiveValue() instanceof Number) {
+      Number number = (Number) primitive.getPrimitiveValue();
       return number instanceof BigInteger || number instanceof Long || number instanceof Integer
           || number instanceof Short || number instanceof Byte;
     }
