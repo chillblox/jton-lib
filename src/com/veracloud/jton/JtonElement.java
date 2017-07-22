@@ -16,6 +16,8 @@ package com.veracloud.jton;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import com.veracloud.jton.serialization.JsonSerializer;
 import com.veracloud.jton.serialization.SerializationException;
@@ -47,11 +49,9 @@ public abstract class JtonElement {
   }
 
   /**
-   * Provides check for verifying if this element is a {@link JtonObject} or
-   * not.
+   * Provides check for verifying if this element is a {@link JtonObject} or not.
    *
-   * @return true if this element is of type {@link JtonObject}, false
-   *         otherwise.
+   * @return true if this element is of type {@link JtonObject}, false otherwise.
    */
   public boolean isJtonObject() {
     return this instanceof JtonObject;
@@ -89,6 +89,62 @@ public abstract class JtonElement {
   }
 
   // -----------------------------------------------------------------------
+  // QUICK ACCESS METHODS
+  // -----------------------------------------------------------------------
+
+  /**
+   * Convenience method to get the member with the specified name if this element
+   * is a {@link JtonObject}.
+   *
+   * @param memberName
+   *          name of the member that is being requested.
+   * @return the member matching the name; {@link JtonNull} if no such member
+   *         exists.
+   * @throws IllegalStateException
+   *           if {@code this} is not a {@link JtonObject}.
+   */
+  public JtonElement get(String memberName) {
+    return getAsJtonObject().get(memberName);
+  }
+
+  public boolean has(String memberName) {
+    return getAsJtonObject().has(memberName);
+  }
+
+  public Set<String> keySet() {
+    return getAsJtonObject().keySet();
+  }
+
+  /**
+   * Convenience method to get the i-th element if this element is a
+   * {@link JtonArray}.
+   *
+   * @param i
+   *          the index of the element that is being sought.
+   * @return the element present at the i-th index.
+   * @throws IndexOutOfBoundsException
+   *           if i is negative or greater than or equal to the {@link #size()} of
+   *           the array.
+   * @throws IllegalStateException
+   *           if {@code this} is not a {@link JtonArray}.
+   */
+  public JtonElement get(int i) {
+    return getAsJtonArray().get(i);
+  }
+
+  public int indexOf(JtonElement e) {
+    return getAsJtonArray().indexOf(e);
+  }
+
+  public int lastIndexOf(JtonElement e) {
+    return getAsJtonArray().indexOf(e);
+  }
+
+  public Stream<JtonElement> stream() {
+    return getAsJtonArray().stream();
+  }
+
+  // -----------------------------------------------------------------------
   // TYPE CASTING
   // -----------------------------------------------------------------------
 
@@ -109,6 +165,14 @@ public abstract class JtonElement {
     throw new IllegalStateException("This is not a JtonObject: " + this);
   }
 
+  public JtonObject getAsJtonObject(boolean createIfNull) {
+    try {
+      return isJtonObject() ? getAsJtonObject() : createIfNull ? new JtonObject() : null;
+    } catch (ClassCastException e) {
+      return createIfNull ? new JtonObject() : null;
+    }
+  }
+
   public JtonObject getAsJtonObject(JtonObject fallback) {
     try {
       return isJtonObject() ? getAsJtonObject() : fallback;
@@ -118,10 +182,10 @@ public abstract class JtonElement {
   }
 
   /**
-   * convenience method to get this element as a {@link JtonArray}. If the
-   * element is of some other type, a {@link IllegalStateException} will result.
-   * Hence it is best to use this method after ensuring that this element is of
-   * the desired type by calling {@link #isJtonArray()} first.
+   * convenience method to get this element as a {@link JtonArray}. If the element
+   * is of some other type, a {@link IllegalStateException} will result. Hence it
+   * is best to use this method after ensuring that this element is of the desired
+   * type by calling {@link #isJtonArray()} first.
    *
    * @return get this element as a {@link JtonArray}.
    * @throws IllegalStateException
@@ -132,6 +196,14 @@ public abstract class JtonElement {
       return (JtonArray) this;
     }
     throw new IllegalStateException("This is not a JtonArray: " + this);
+  }
+
+  public JtonArray getAsJtonArray(boolean createIfNull) {
+    try {
+      return isJtonArray() ? getAsJtonArray() : createIfNull ? new JtonArray() : null;
+    } catch (ClassCastException e) {
+      return createIfNull ? new JtonArray() : null;
+    }
   }
 
   public JtonArray getAsJtonArray(JtonArray fallback) {
@@ -168,31 +240,29 @@ public abstract class JtonElement {
   }
 
   /**
-   * convenience method to get this element as a {@link JtonNull}. If the
-   * element is of some other type, a {@link IllegalStateException} will result.
-   * Hence it is best to use this method after ensuring that this element is of
-   * the desired type by calling {@link #isJtonNull()} first.
+   * convenience method to get this element as a {@link JtonNull}. If the element
+   * is of some other type, a {@link IllegalStateException} will result. Hence it
+   * is best to use this method after ensuring that this element is of the desired
+   * type by calling {@link #isJtonNull()} first.
    *
    * @return get this element as a {@link JtonNull}.
    * @throws IllegalStateException
    *           if the element is of another type.
    */
-  //@formatter:off
-//  public JtonNull getAsJtonNull() {
-//    if (isJtonNull()) {
-//      return (JtonNull) this;
-//    }
-//    throw new IllegalStateException("This is not a JtonNull: " + this);
-//  }
-//
-//  public JtonNull getAsJtonNull(JtonNull fallback) {
-//    try {
-//      return isJtonPrimitive() ? getAsJtonNull() : fallback;
-//    } catch (ClassCastException e) {
-//      return fallback;
-//    }
-//  }
-  //@formatter:on
+  public JtonNull getAsJtonNull() {
+    if (isJtonNull()) {
+      return (JtonNull) this;
+    }
+    throw new IllegalStateException("This is not a JtonNull: " + this);
+  }
+
+  public JtonNull getAsJtonNull(JtonNull fallback) {
+    try {
+      return isJtonPrimitive() ? getAsJtonNull() : fallback;
+    } catch (ClassCastException e) {
+      return fallback;
+    }
+  }
 
   // -----------------------------------------------------------------------
   // PRIMITIVE DATA TYPES
@@ -203,8 +273,8 @@ public abstract class JtonElement {
    *
    * @return get this element as a primitive boolean value.
    * @throws ClassCastException
-   *           if the element is of not a {@link JtonPrimitive} and is not a
-   *           valid boolean value.
+   *           if the element is of not a {@link JtonPrimitive} and is not a valid
+   *           boolean value.
    * @throws IllegalStateException
    *           if the element is of the type {@link JtonArray} but contains more
    *           than a single element.
@@ -234,8 +304,8 @@ public abstract class JtonElement {
    *
    * @return get this element as a {@link Number}.
    * @throws ClassCastException
-   *           if the element is of not a {@link JtonPrimitive} and is not a
-   *           valid number.
+   *           if the element is of not a {@link JtonPrimitive} and is not a valid
+   *           number.
    * @throws IllegalStateException
    *           if the element is of the type {@link JtonArray} but contains more
    *           than a single element.
@@ -257,8 +327,8 @@ public abstract class JtonElement {
    *
    * @return get this element as a string value.
    * @throws ClassCastException
-   *           if the element is of not a {@link JtonPrimitive} and is not a
-   *           valid string value.
+   *           if the element is of not a {@link JtonPrimitive} and is not a valid
+   *           string value.
    * @throws IllegalStateException
    *           if the element is of the type {@link JtonArray} but contains more
    *           than a single element.
@@ -280,8 +350,8 @@ public abstract class JtonElement {
    *
    * @return get this element as a primitive double value.
    * @throws ClassCastException
-   *           if the element is of not a {@link JtonPrimitive} and is not a
-   *           valid double value.
+   *           if the element is of not a {@link JtonPrimitive} and is not a valid
+   *           double value.
    * @throws IllegalStateException
    *           if the element is of the type {@link JtonArray} but contains more
    *           than a single element.
@@ -311,8 +381,8 @@ public abstract class JtonElement {
    *
    * @return get this element as a primitive float value.
    * @throws ClassCastException
-   *           if the element is of not a {@link JtonPrimitive} and is not a
-   *           valid float value.
+   *           if the element is of not a {@link JtonPrimitive} and is not a valid
+   *           float value.
    * @throws IllegalStateException
    *           if the element is of the type {@link JtonArray} but contains more
    *           than a single element.
@@ -342,8 +412,8 @@ public abstract class JtonElement {
    *
    * @return get this element as a primitive long value.
    * @throws ClassCastException
-   *           if the element is of not a {@link JtonPrimitive} and is not a
-   *           valid long value.
+   *           if the element is of not a {@link JtonPrimitive} and is not a valid
+   *           long value.
    * @throws IllegalStateException
    *           if the element is of the type {@link JtonArray} but contains more
    *           than a single element.
@@ -373,8 +443,8 @@ public abstract class JtonElement {
    *
    * @return get this element as a primitive integer value.
    * @throws ClassCastException
-   *           if the element is of not a {@link JtonPrimitive} and is not a
-   *           valid integer value.
+   *           if the element is of not a {@link JtonPrimitive} and is not a valid
+   *           integer value.
    * @throws IllegalStateException
    *           if the element is of the type {@link JtonArray} but contains more
    *           than a single element.
@@ -383,15 +453,15 @@ public abstract class JtonElement {
     throw new UnsupportedOperationException(getClass().getSimpleName());
   }
 
-  public int getAsInteger(int fallback) {
+  public int getAsInt(int fallback) {
     try {
       return isJtonPrimitive() ? getAsInt() : fallback;
     } catch (Throwable t) {
       return fallback;
     }
   }
-  
-  public Integer getAsInteger(Integer fallback) {
+
+  public Integer getAsInt(Integer fallback) {
     try {
       return isJtonPrimitive() ? getAsInt() : fallback;
     } catch (Throwable t) {
@@ -404,8 +474,8 @@ public abstract class JtonElement {
    *
    * @return get this element as a primitive byte value.
    * @throws ClassCastException
-   *           if the element is of not a {@link JtonPrimitive} and is not a
-   *           valid byte value.
+   *           if the element is of not a {@link JtonPrimitive} and is not a valid
+   *           byte value.
    * @throws IllegalStateException
    *           if the element is of the type {@link JtonArray} but contains more
    *           than a single element.
@@ -427,8 +497,8 @@ public abstract class JtonElement {
    *
    * @return get this element as a primitive char value.
    * @throws ClassCastException
-   *           if the element is of not a {@link JtonPrimitive} and is not a
-   *           valid char value.
+   *           if the element is of not a {@link JtonPrimitive} and is not a valid
+   *           char value.
    * @throws IllegalStateException
    *           if the element is of the type {@link JtonArray} but contains more
    *           than a single element.
@@ -506,8 +576,8 @@ public abstract class JtonElement {
    *
    * @return get this element as a primitive short value.
    * @throws ClassCastException
-   *           if the element is of not a {@link JtonPrimitive} and is not a
-   *           valid short value.
+   *           if the element is of not a {@link JtonPrimitive} and is not a valid
+   *           short value.
    * @throws IllegalStateException
    *           if the element is of the type {@link JtonArray} but contains more
    *           than a single element.

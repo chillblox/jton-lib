@@ -16,6 +16,7 @@ package com.veracloud.jton;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -77,9 +78,9 @@ public class JtonObject extends JtonElement implements Map<String, JtonElement> 
       throw new IllegalArgumentException("cyclic reference");
     }
 
-    if (value == null) {
-      value = JtonNull.INSTANCE;
-      members.put(property, (JtonElement) value);
+    if (value == null || value == JtonNull.INSTANCE) {
+//      value = JtonNull.INSTANCE;
+//      members.put(property, (JtonElement) value);
     } else if (value instanceof JtonElement) {
       members.put(property, (JtonElement) value);
     } else {
@@ -87,6 +88,10 @@ public class JtonObject extends JtonElement implements Map<String, JtonElement> 
     }
 
     return this;
+  }
+
+  public JtonObject set(String property, Stream<JtonElement> stream) {
+    return set(property, new JtonArray(stream));
   }
 
   /**
@@ -164,6 +169,7 @@ public class JtonObject extends JtonElement implements Map<String, JtonElement> 
    *          name of the member that is being checked for presence.
    * @return true if there is a member with the specified name, false otherwise.
    */
+  @Override
   public boolean has(String memberName) {
     return members.containsKey(memberName);
   }
@@ -176,6 +182,7 @@ public class JtonObject extends JtonElement implements Map<String, JtonElement> 
    * @return the member matching the name; {@link JtonNull} if no such member
    *         exists.
    */
+  @Override
   public JtonElement get(String memberName) {
     if (members.containsKey(memberName))
       return members.get(memberName);

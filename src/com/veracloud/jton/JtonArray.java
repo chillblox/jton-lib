@@ -14,12 +14,14 @@
 package com.veracloud.jton;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * A class representing an array type in Json. An array is a list of
@@ -46,6 +48,14 @@ public final class JtonArray extends JtonElement implements List<JtonElement> {
    */
   public JtonArray() {
     elements = new ArrayList<JtonElement>();
+  }
+  
+  public JtonArray(List<JtonElement> elements) {
+    this.elements = elements;
+  }
+  
+  public JtonArray(Stream<JtonElement> stream) {
+    this(Arrays.asList(stream.toArray(JtonElement[]::new)));
   }
 
   @Override
@@ -75,21 +85,61 @@ public final class JtonArray extends JtonElement implements List<JtonElement> {
   public boolean add(Boolean bool) {
     return add(new JtonPrimitive(bool));
   }
+  
+  public void add(int index, Boolean bool) {
+    add(index, new JtonPrimitive(bool));
+  }
+
+  public JtonElement set(int index, Boolean bool) {
+    return set(index, new JtonPrimitive(bool));
+  }
 
   public boolean add(Number number) {
     return add(new JtonPrimitive(number));
+  }
+  
+  public void add(int index, Number number) {
+    add(index, new JtonPrimitive(number));
+  }
+
+  public JtonElement set(int index, Number number) {
+    return set(index, new JtonPrimitive(number));
   }
 
   public boolean add(String string) {
     return add(new JtonPrimitive(string));
   }
+  
+  public void add(int index, String string) {
+    add(index, new JtonPrimitive(string));
+  }
+
+  public JtonElement set(int index, String string) {
+    return set(index, new JtonPrimitive(string));
+  }
 
   public boolean add(Character c) {
     return add(new JtonPrimitive(c));
   }
+  
+  public void add(int index, Character c) {
+    add(index, new JtonPrimitive(c));
+  }
+
+  public JtonElement set(int index, Character c) {
+    return set(index, new JtonPrimitive(c));
+  }
 
   public boolean add(Date date) {
     return add(new JtonPrimitive(date));
+  }
+  
+  public void add(int index, Date date) {
+    add(index, new JtonPrimitive(date));
+  }
+
+  public JtonElement set(int index, Date date) {
+    return set(index, new JtonPrimitive(date));
   }
 
   /**
@@ -119,18 +169,21 @@ public final class JtonArray extends JtonElement implements List<JtonElement> {
 
   /**
    * Replaces the element at the specified position in this array with the
-   * specified element. Element can be null.
+   * specified element. Element can be {@code null}.
    * 
    * @param index
    *          index of the element to replace
    * @param element
    *          element to be stored at the specified position
    * @return the element previously at the specified position
-   * @throws IndexOutOfBoundsException
-   *           if the specified index is outside the array bounds
    */
   @Override
   public JtonElement set(int index, JtonElement element) {
+    if (index >= elements.size()) {
+      for (int i = elements.size(); i <= index; i++) {
+        elements.add(JtonNull.INSTANCE);
+      }
+    }
     return elements.set(index, element);
   }
 
@@ -141,7 +194,6 @@ public final class JtonArray extends JtonElement implements List<JtonElement> {
    * @param element
    *          element to be removed from this array, if present
    * @return true if this array contained the specified element, false otherwise
-   * @since 2.3
    */
   public boolean remove(JtonElement element) {
     return elements.remove(element);
@@ -157,7 +209,6 @@ public final class JtonArray extends JtonElement implements List<JtonElement> {
    * @return the element previously at the specified position
    * @throws IndexOutOfBoundsException
    *           if the specified index is outside the array bounds
-   * @since 2.3
    */
   @Override
   public JtonElement remove(int index) {
@@ -203,13 +254,14 @@ public final class JtonArray extends JtonElement implements List<JtonElement> {
    * @param i
    *          the index of the element that is being sought.
    * @return the element present at the ith index.
-   * @throws IndexOutOfBoundsException
-   *           if i is negative or greater than or equal to the {@link #size()}
-   *           of the array.
    */
   @Override
   public JtonElement get(int i) {
-    return elements.get(i);
+    if (i < elements.size()) {
+      return elements.get(i);
+    } else {
+      return JtonNull.INSTANCE;
+    }
   }
 
   /**
@@ -498,12 +550,24 @@ public final class JtonArray extends JtonElement implements List<JtonElement> {
   }
 
   @Override
+  @Deprecated
   public int indexOf(Object o) {
     return elements.indexOf(o);
   }
 
   @Override
+  public int indexOf(JtonElement e) {
+    return elements.indexOf(e);
+  }
+
+  @Override
+  @Deprecated
   public int lastIndexOf(Object o) {
+    return elements.lastIndexOf(o);
+  }
+  
+  @Override
+  public int lastIndexOf(JtonElement o) {
     return elements.lastIndexOf(o);
   }
 
@@ -520,5 +584,10 @@ public final class JtonArray extends JtonElement implements List<JtonElement> {
   @Override
   public List<JtonElement> subList(int fromIndex, int toIndex) {
     return elements.subList(fromIndex, toIndex);
+  }
+
+  @Override
+  public Stream<JtonElement> stream() {
+    return elements.stream();
   }
 }
